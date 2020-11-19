@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:salvy_calendar/states/day_state.dart';
-import 'package:salvy_calendar/style.dart';
+import 'package:salvy_calendar/util/style.dart';
+import 'package:salvy_calendar/util/web_version_info.dart';
 import 'package:salvy_calendar/widgets/big_day_container.dart';
 import 'package:salvy_calendar/widgets/day_container.dart';
 
@@ -9,7 +8,6 @@ class CalendarPage extends StatelessWidget {
   CalendarPage({Key key, this.title}) : super(key: key);
 
   final String title;
-  final ScrollController _scrollController =  ScrollController();
 
   Row createDayRow(int startDay) {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -44,17 +42,15 @@ class CalendarPage extends StatelessWidget {
     ];
   }
 
+  String getVersionNr() {
+    //could be async in future if package_info allows web tow ork
+    if(!WebVersionInfo.showVersion) return "";
+
+    return "${WebVersionInfo.name} + ${WebVersionInfo.build}";
+  }
+
   @override
   Widget build(BuildContext context) {
-
-   /* if(Provider.of<DayState>(context).selectedDay != null){
-      _scrollController.jumpTo(_scrollController.positions.first.minScrollExtent);
-    }*/
-    _scrollController.addListener(() {
-      print("here I listen");
-    });
-
-
     return Scaffold(
       backgroundColor: Style.backgroundColor,
       appBar: AppBar(
@@ -63,17 +59,22 @@ class CalendarPage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Center(
-          child: SizeChangedLayoutNotifier(
-            child: SingleChildScrollView(
-               controller: _scrollController,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: createDaysList(1),
-              ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: createDaysList(1),
             ),
           ),
         ),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
+      bottomSheet: Wrap(children: [
+        Align(
+            alignment: AlignmentDirectional.bottomEnd,
+            child: Text(
+              getVersionNr(),
+              style: Style.infoTextStyle,
+            )),
+      ]), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

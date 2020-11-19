@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:salvy_calendar/models/day_model.dart';
 import 'package:provider/provider.dart';
 import 'package:salvy_calendar/states/day_state.dart';
-import 'package:salvy_calendar/style.dart';
+import 'package:salvy_calendar/util/style.dart';
 
 class DayContainer extends StatelessWidget {
   final DayModel _dayModel;

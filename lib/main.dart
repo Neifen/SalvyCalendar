@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:salvy_calendar/pages/calendar_page.dart';
 import 'package:salvy_calendar/states/day_state.dart';
-import 'package:salvy_calendar/style.dart';
-import 'package:salvy_calendar/widgets/big_day_container.dart';
-
-import 'widgets/day_container.dart';
+import 'package:salvy_calendar/util/style.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -21,6 +18,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Salvy Calendar',
       theme: ThemeData(
+        bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.transparent),
         primarySwatch: Style.primaryColor,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
