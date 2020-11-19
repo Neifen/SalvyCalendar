@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:salvy_calendar/states/day_state.dart';
-import 'package:salvy_calendar/style.dart';
+import 'package:salvy_calendar/util/style.dart';
 
 class BigDayContainer extends StatelessWidget {
   final List<int> _responsibilities;
