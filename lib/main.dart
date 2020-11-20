@@ -18,7 +18,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Salvy Calendar',
       theme: ThemeData(
-        bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.transparent),
+        bottomSheetTheme:
+            BottomSheetThemeData(backgroundColor: Colors.transparent),
         primarySwatch: Style.primaryColor,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
@@ -26,5 +27,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-

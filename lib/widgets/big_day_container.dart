@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:salvy_calendar/services/storage_getter.dart';
 import 'package:salvy_calendar/states/day_state.dart';
 import 'package:salvy_calendar/util/style.dart';
 
@@ -27,7 +27,18 @@ class BigDayContainer extends StatelessWidget {
                     borderRadius: BorderRadius.circular(5.0),
                     color: Style.primaryColor,
                     border: Border.all(width: 0)),
-                child: Center(child: Text(dayState.selectedDay.title, style: Style.buttonTextStyle,)),
+                child: Center(
+                    child: FutureBuilder(
+                  future: StorageGetter.getFileName(dayState.selectedDay.day),
+                  builder: (context, snapshot) => Text(
+                    snapshot.hasData
+                        ? snapshot.data
+                        : snapshot.hasError
+                            ? snapshot.error
+                            : "loading...",
+                    style: Style.buttonTextStyle,
+                  ),
+                )),
               ),
             ),
           );
