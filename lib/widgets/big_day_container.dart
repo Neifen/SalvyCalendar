@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:salvy_calendar/states/day_state.dart';
 import 'package:salvy_calendar/util/style.dart';
 

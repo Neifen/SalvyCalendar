@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:salvy_calendar/services/storage_getter.dart';
 import 'package:salvy_calendar/util/style.dart';
 import 'package:salvy_calendar/util/web_version_info.dart';
 import 'package:salvy_calendar/widgets/big_day_container.dart';
@@ -51,6 +52,9 @@ class CalendarPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    print(StorageGetter().getOverview());
+
     return Scaffold(
       backgroundColor: Style.backgroundColor,
       appBar: AppBar(
