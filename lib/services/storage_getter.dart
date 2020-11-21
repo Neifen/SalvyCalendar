@@ -1,7 +1,4 @@
-import 'dart:collection';
 import 'dart:convert';
-import 'dart:html';
-import 'dart:io';
 import 'package:chewie/chewie.dart';
 import 'package:video_player/video_player.dart';
 
@@ -49,18 +46,6 @@ class StorageGetter {
 
       _dayToFileMap[dayNr] = file;
     });
-  }
-
-  static Future<String> getFileUrl(int day) async {
-    if (_dayToFileMap.isEmpty) {
-      _mapDaysFromFirebase();
-    }
-    if (_dayToFileMap.containsKey(day)) {
-      getContent(day);
-      Uri uri = _dayToFileMap[day].url;
-      return uri.toString();
-    }
-    return "https://imttrade.com/wp-content/uploads/2016/12/white-background-2.jpg";
   }
 
   static Future<Widget> getContent(int day) async {
