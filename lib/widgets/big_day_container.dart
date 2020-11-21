@@ -29,16 +29,18 @@ class BigDayContainer extends StatelessWidget {
                     border: Border.all(width: 0)),
                 child: Center(
                     child: FutureBuilder(
-                  future: StorageGetter.getFileName(dayState.selectedDay.day),
-                  builder: (context, snapshot) => Text(
-                    snapshot.hasData
-                        ? snapshot.data
-                        : snapshot.hasError
-                            ? snapshot.error
-                            : "loading...",
-                    style: Style.buttonTextStyle,
-                  ),
-                )),
+                  future: StorageGetter.getContent(dayState.selectedDay.day),
+                  builder: (context, snapshot) {
+                    if(snapshot.hasData){
+                      return snapshot.data;
+                    }else if (snapshot.hasError){
+                      return Text(snapshot.error.toString());
+                    }else{
+                      return CircularProgressIndicator();
+                    }
+
+
+                  })),
               ),
             ),
           );
