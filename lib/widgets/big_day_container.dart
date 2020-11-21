@@ -15,10 +15,9 @@ class BigDayContainer extends StatelessWidget {
     return Expanded(
       child: Consumer<DayState>(
         builder: (context, dayState, child) {
-          return Visibility(
-            visible: dayState.isDaySelected &&
-                _responsibilities.contains(dayState.selectedDay.day),
-            child: AspectRatio(
+          if (dayState.isDaySelected &&
+              _responsibilities.contains(dayState.selectedDay.day)) {
+            return AspectRatio(
               aspectRatio: 1.0,
               child: Container(
                 key: dayState.selectedDay.key,
@@ -29,19 +28,21 @@ class BigDayContainer extends StatelessWidget {
                     border: Border.all(width: 0)),
                 child: Center(
                     child: FutureBuilder(
-                  future: StorageGetter.getFileName(dayState.selectedDay.day),
-                  builder: (context, snapshot) => Text(
-                    snapshot.hasData
-                        ? snapshot.data
-                        : snapshot.hasError
-                            ? snapshot.error
-                            : "loading...",
-                    style: Style.buttonTextStyle,
-                  ),
-                )),
+                        future:
+                            StorageGetter.getContent(dayState.selectedDay.day),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return snapshot.data;
+                          } else if (snapshot.hasError) {
+                            return Text(snapshot.error.toString());
+                          } else {
+                            return CircularProgressIndicator();
+                          }
+                        })),
               ),
-            ),
-          );
+            );
+          } else
+            return Container();
         },
       ),
     );

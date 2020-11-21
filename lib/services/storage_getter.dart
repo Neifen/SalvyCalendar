@@ -1,15 +1,68 @@
-import 'dart:collection';
 import 'dart:convert';
-import 'dart:io';
+import 'package:chewie/chewie.dart';
+import 'package:video_player/video_player.dart';
 
 import 'package:firebase/firebase.dart' as fb;
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:http/http.dart';
+import 'package:salvy_calendar/models/media_file_model.dart';
 
 class StorageGetter {
-  static Map _dayToFileMap;
+  static Map<int, MediaFileModel> _dayToFileMap = Map();
+  static fb.StorageReference _baseRef =
+      fb.app().storage().refFromURL("gs://calendarr-260410.appspot.com/Bern");
 
 
-  static Future<Map> _mapDaysFromFirebase() async {
+  static _mapDaysFromFirebase() async {
+   _initiateFirebase();
+
+   //first get the overview file
+    Uri url = await _getUrl("calendar.txt");
+    var response = await get(url);
+
+    //then transform and parse the lines/ the numbers from the rest
+    List<String> days = LineSplitter().convert(response.body);
+    days.forEach((element) async {
+      var split = element.split(":");
+
+      //create a MediaFileModel with those data
+      var dayNr = int.parse(split[0]);
+      var file = MediaFileModel(dayNr, split[1]);
+
+      file.url = await _getUrl(file.fileName);
+      var fileMeta = await _baseRef.child(file.fileName).getMetadata();
+      file.contentType = fileMeta.contentType;
+
+      _dayToFileMap[dayNr] = file;
+    });
+  }
+
+  static Future<Widget> getContent(int day) async {
+    if (_dayToFileMap.isEmpty) {
+      _mapDaysFromFirebase();
+    }
+    if (_dayToFileMap.containsKey(day)) {
+      var dayFile = _dayToFileMap[day];
+      if (dayFile.contentType.startsWith("image")) {
+        return Image.network(dayFile.url.toString());
+      } else if (dayFile.contentType.startsWith("video")) {
+        var videoController = VideoPlayerController.network(
+            dayFile.url.toString());
+        await videoController.initialize();
+        return Chewie(controller: ChewieController(
+            videoPlayerController: videoController));
+      }
+    }
+    return CircularProgressIndicator();
+  }
+
+
+  static Future<Uri> _getUrl(String child) {
+    return _baseRef.child(child).getDownloadURL();
+  }
+
+  static _initiateFirebase(){
     if (fb.apps.length == 0) {
       fb.initializeApp(
           apiKey: "AIzaSyAhChCiAoLRv_lPxv_pZSPcnNmtl0HvR-U",
@@ -21,41 +74,5 @@ class StorageGetter {
           appId: "1:1036752557927:web:882ae6d88c959af5a781c2",
           measurementId: "G-C5E1LBCGSX");
     }
-
-    fb.StorageReference result =
-        fb.app().storage().refFromURL("gs://calendarr-260410.appspot.com/Bern");
-    Uri url = await result.child("calendar.txt").getDownloadURL();
-    var response = await get(url);
-    List<String> days = LineSplitter().convert(response.body);
-
-    Map map = Map.fromIterable(days,
-        key: (day) => day.split(":")[0], value: (day) => day.split(":")[1]);
-
-    return map;
-  }
-
-  static Future<String> getFileName(int day) async {
-    if(_dayToFileMap==null){
-      _dayToFileMap=await _mapDaysFromFirebase();
-    }
-
-    return _dayToFileMap[day.toString()];
-  }
-
-  Future<void> printOverview() async {
-    fb.ListResult result = await fb
-        .app()
-        .storage()
-        .refFromURL("gs://calendarr-260410.appspot.com/Bern")
-        .listAll();
-
-    result.items.forEach((fb.StorageReference ref) {
-      print('Found file: $ref');
-    });
-
-    result.prefixes.forEach((fb.StorageReference ref) {
-      print('Found directory: $ref');
-    });
-    // Reference ref = FirebaseStorage.instance.ref('/bern/calendar.txt');
   }
 }
