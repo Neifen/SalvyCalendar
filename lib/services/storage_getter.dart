@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:chewie/chewie.dart';
 import 'package:video_player/video_player.dart';
 
-
 import 'package:firebase/firebase.dart' as fb;
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -14,29 +13,20 @@ class StorageGetter {
   static fb.StorageReference _baseRef =
       fb.app().storage().refFromURL("gs://calendarr-260410.appspot.com/Bern");
 
-  static Future<Uri> _getUrl(String child) {
-    return _baseRef.child(child).getDownloadURL();
-  }
 
   static _mapDaysFromFirebase() async {
-    if (fb.apps.length == 0) {
-      fb.initializeApp(
-          apiKey: "AIzaSyAhChCiAoLRv_lPxv_pZSPcnNmtl0HvR-U",
-          authDomain: "calendarr-260410.firebaseapp.com",
-          databaseURL: "https://calendarr-260410.firebaseio.com",
-          projectId: "calendarr-260410",
-          storageBucket: "calendarr-260410.appspot.com",
-          messagingSenderId: "1036752557927",
-          appId: "1:1036752557927:web:882ae6d88c959af5a781c2",
-          measurementId: "G-C5E1LBCGSX");
-    }
+   _initiateFirebase();
 
+   //first get the overview file
     Uri url = await _getUrl("calendar.txt");
     var response = await get(url);
+
+    //then transform and parse the lines/ the numbers from the rest
     List<String> days = LineSplitter().convert(response.body);
     days.forEach((element) async {
       var split = element.split(":");
 
+      //create a MediaFileModel with those data
       var dayNr = int.parse(split[0]);
       var file = MediaFileModel(dayNr, split[1]);
 
@@ -65,5 +55,24 @@ class StorageGetter {
       }
     }
     return CircularProgressIndicator();
+  }
+
+
+  static Future<Uri> _getUrl(String child) {
+    return _baseRef.child(child).getDownloadURL();
+  }
+
+  static _initiateFirebase(){
+    if (fb.apps.length == 0) {
+      fb.initializeApp(
+          apiKey: "AIzaSyAhChCiAoLRv_lPxv_pZSPcnNmtl0HvR-U",
+          authDomain: "calendarr-260410.firebaseapp.com",
+          databaseURL: "https://calendarr-260410.firebaseio.com",
+          projectId: "calendarr-260410",
+          storageBucket: "calendarr-260410.appspot.com",
+          messagingSenderId: "1036752557927",
+          appId: "1:1036752557927:web:882ae6d88c959af5a781c2",
+          measurementId: "G-C5E1LBCGSX");
+    }
   }
 }
