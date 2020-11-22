@@ -31,12 +31,17 @@ class BigDayContainer extends StatelessWidget {
                         future:
                             StorageGetter.getContent(dayState.selectedDay.day),
                         builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return snapshot.data;
-                          } else if (snapshot.hasError) {
-                            return Text(snapshot.error.toString());
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            if (snapshot.hasData) {
+                              return snapshot.data;
+                            } else if (snapshot.hasError) {
+                              return Text(snapshot.error.toString());
+                            } else {
+                              return CircularProgressIndicator(backgroundColor: Colors.blue);
+                            }
                           } else {
-                            return CircularProgressIndicator();
+                            return CircularProgressIndicator(backgroundColor: Colors.blue);
                           }
                         })),
               ),
