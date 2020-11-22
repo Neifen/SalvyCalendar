@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:chewie/chewie.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:video_player/video_player.dart';
 
 import 'package:firebase/firebase.dart' as fb;
@@ -12,57 +13,75 @@ class StorageGetter {
   static Map<int, MediaFileModel> _dayToFileMap = Map();
   static fb.StorageReference _baseRef =
       fb.app().storage().refFromURL("gs://calendarr-260410.appspot.com/Bern");
+  static String _baseUrl = "https://firebasestorage.googleapis.com/v0/b/calendarr-260410.appspot.com/o/Bern%2F";
+  static String _urlMediaSuffix = "?alt=media";
 
 
-  static _mapDaysFromFirebase() async {
-   _initiateFirebase();
+  static Future<void> _mapDaysFromFirebase() async {
+    _initiateFirebase();
 
-   //first get the overview file
-    Uri url = await _getUrl("calendar.txt");
+    //first get the overview file
+    String url = _getUrl("calendar.txt");
+
     var response = await get(url);
 
     //then transform and parse the lines/ the numbers from the rest
     List<String> days = LineSplitter().convert(response.body);
-    days.forEach((element) async {
+    var stopwatchGetUrl = Stopwatch();
+    var stopwatchGetMeta = Stopwatch();
+    var stopwatchTotal = Stopwatch();
+    stopwatchTotal.start();
+    for(String element in days){
       var split = element.split(":");
 
       //create a MediaFileModel with those data
       var dayNr = int.parse(split[0]);
       var file = MediaFileModel(dayNr, split[1]);
 
-      file.url = await _getUrl(file.fileName);
-      var fileMeta = await _baseRef.child(file.fileName).getMetadata();
-      file.contentType = fileMeta.contentType;
+      file.url = _getUrl(file.fileName);
 
       _dayToFileMap[dayNr] = file;
-    });
+    }
+
   }
 
   static Future<Widget> getContent(int day) async {
     if (_dayToFileMap.isEmpty) {
-      _mapDaysFromFirebase();
+      await _mapDaysFromFirebase();
     }
-    if (_dayToFileMap.containsKey(day)) {
-      var dayFile = _dayToFileMap[day];
-      if (dayFile.contentType.startsWith("image")) {
-        return Image.network(dayFile.url.toString());
-      } else if (dayFile.contentType.startsWith("video")) {
-        var videoController = VideoPlayerController.network(
-            dayFile.url.toString());
-        await videoController.initialize();
-        return Chewie(controller: ChewieController(
-            videoPlayerController: videoController));
+
+
+    if (!_dayToFileMap.containsKey(day)) {
+      throw ("The day $day is not saved in the dayToFileMap with ${_dayToFileMap.length} values");
+    }
+
+    var dayFile = _dayToFileMap[day];
+
+    if (dayFile.preSave == null) {
+      switch(dayFile.contentType){
+
+        case ContentType.video:
+          var videoController =
+          VideoPlayerController.network(dayFile.url);
+          await videoController.initialize();
+          _dayToFileMap[day].preSave = Chewie(
+              controller:
+              ChewieController(videoPlayerController: videoController));          break;
+        case ContentType.image:
+          _dayToFileMap[day].preSave = Image.network(dayFile.url);
+          break;
+        case ContentType.unknown:
+          throw ("The day $day doesn't have an image or video saved but a ${dayFile.contentType}");
       }
     }
-    return CircularProgressIndicator();
+    return dayFile.preSave;
   }
 
-
-  static Future<Uri> _getUrl(String child) {
-    return _baseRef.child(child).getDownloadURL();
+  static String _getUrl(String child) {
+    return _baseUrl+ child +_urlMediaSuffix;
   }
 
-  static _initiateFirebase(){
+  static _initiateFirebase() {
     if (fb.apps.length == 0) {
       fb.initializeApp(
           apiKey: "AIzaSyAhChCiAoLRv_lPxv_pZSPcnNmtl0HvR-U",
