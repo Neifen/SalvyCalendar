@@ -1,9 +1,8 @@
-import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
-import 'package:salvy_calendar/pages/calendar_page.dart';
+import 'package:provider/provider.dart';
+import 'package:salvy_calendar/services/route_serivce.dart';
 import 'package:salvy_calendar/states/day_state.dart';
 import 'package:salvy_calendar/util/style.dart';
-import 'package:provider/provider.dart';
 
 void main() {
   runApp(ChangeNotifierProvider(
@@ -16,16 +15,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final router = FluroRouter();
-
-    router.define("/:id", handler: Handler(
-        handlerFunc: (BuildContext context, Map<String, dynamic> params) {
-          var corpsName = params["id"][0];
-          if(corpsName=='/'){
-            return CircularProgressIndicator();
-          }
-      return CalendarPage(title: corpsName, corpsName: corpsName);
-    }));
+    var _router = RouteService();
 
     return MaterialApp(
         title: 'Salvy Calendar',
@@ -36,6 +26,6 @@ class MyApp extends StatelessWidget {
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         initialRoute: '/Bern',
-        onGenerateRoute: router.generator);
+        onGenerateRoute: _router.generator);
   }
 }

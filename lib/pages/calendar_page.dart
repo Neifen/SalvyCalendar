@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:salvy_calendar/services/storage_getter.dart';
 import 'package:salvy_calendar/util/style.dart';
 import 'package:salvy_calendar/util/web_version_info.dart';
-import 'package:salvy_calendar/widgets/big_day_container.dart';
 import 'package:salvy_calendar/widgets/day_container.dart';
 
 class CalendarPage extends StatelessWidget {
-
-  CalendarPage({Key key, this.title, String corpsName}) : super(key: key){
-    StorageGetter.init(corpsName);
-  }
+  CalendarPage({Key key, this.title}) : super(key: key);
 
   final String title;
-
 
   Row createDayRow(int startDay) {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -23,33 +17,20 @@ class CalendarPage extends StatelessWidget {
     ]);
   }
 
-  Row createBigDayContainer(int startDay) {
-    var dayList = [startDay, startDay + 1, startDay + 2, startDay + 3];
-    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      BigDayContainer(dayList),
-    ]);
-  }
-
   List<Widget> createDaysList(int startDay) {
     return [
       createDayRow(startDay),
-      createBigDayContainer(startDay),
       createDayRow(startDay = startDay + 4),
-      createBigDayContainer(startDay),
       createDayRow(startDay = startDay + 4),
-      createBigDayContainer(startDay),
       createDayRow(startDay = startDay + 4),
-      createBigDayContainer(startDay),
       createDayRow(startDay = startDay + 4),
-      createBigDayContainer(startDay),
-      createBigDayContainer(startDay = startDay + 4),
-      createDayRow(startDay),
+      createDayRow(startDay = startDay + 4),
     ];
   }
 
   String getVersionNr() {
     //could be async in future if package_info allows web tow ork
-    if(!WebVersionInfo.showVersion) return "";
+    if (!WebVersionInfo.showVersion) return "";
 
     return "${WebVersionInfo.name} + ${WebVersionInfo.build}";
   }

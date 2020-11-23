@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:salvy_calendar/models/day_model.dart';
 
-class DayState extends ChangeNotifier{
+class DayState extends ChangeNotifier {
   bool isDaySelected = false;
   DayModel selectedDay = DayModel(0);
 
-  switchSelection(DayModel newDay){
-    //turn selection around
-    isDaySelected = !isDaySelected;
+  select(DayModel newDay) {
+    isDaySelected = true;
+    selectedDay = newDay;
 
-    //except if its a new selection. Then set selection back to true
-    if(newDay!=selectedDay){
-      isDaySelected= true;
-      selectedDay = newDay;
-    }
+    notifyListeners();
+  }
+
+  cancelSelection() {
+    isDaySelected = false;
     notifyListeners();
   }
 }
