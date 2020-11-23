@@ -1,10 +1,8 @@
-import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
-import 'package:salvy_calendar/pages/calendar_page.dart';
+import 'package:provider/provider.dart';
 import 'package:salvy_calendar/services/route_serivce.dart';
 import 'package:salvy_calendar/states/day_state.dart';
 import 'package:salvy_calendar/util/style.dart';
-import 'package:provider/provider.dart';
 
 void main() {
   runApp(ChangeNotifierProvider(
@@ -17,7 +15,6 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-
     var _router = RouteService();
 
     return MaterialApp(

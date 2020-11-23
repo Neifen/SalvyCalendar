@@ -1,18 +1,20 @@
 import 'dart:convert';
 import 'dart:html';
-import 'package:chewie/chewie.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:video_player/video_player.dart';
 
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chewie/chewie.dart';
 import 'package:firebase/firebase.dart' as fb;
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart';
 import 'package:salvy_calendar/models/media_file_model.dart';
+import 'package:video_player/video_player.dart';
 
 class StorageGetter {
   static Map<int, MediaFileModel> _dayToFileMap = Map();
-  static String _baseUrl = "https://firebasestorage.googleapis.com/v0/b/calendarr-260410.appspot.com/o/$_corps%2F";
+  static String _baseUrl =
+      "https://firebasestorage.googleapis.com/v0/b/calendarr-260410.appspot.com/o/$_corps%2F";
   static final String _urlMediaSuffix = "?alt=media";
   static String _corps;
 
@@ -31,19 +33,16 @@ class StorageGetter {
     String url = _getUrl("calendar.txt");
 
     Response response = await get(url);
-      if(response.statusCode!=HttpStatus.ok){
-        if(response.statusCode==HttpStatus.notFound)
-          throw("Either the Corps $_corps doesn't exist or there is no calander.txt defined");
+    if (response.statusCode != HttpStatus.ok) {
+      if (response.statusCode == HttpStatus.notFound)
+        throw ("Either the Corps $_corps doesn't exist or there is no calander.txt defined");
 
-        throw("There was a network error (${response.statusCode})");
-      }
-
-
+      throw ("There was a network error (${response.statusCode})");
+    }
 
     //then transform and parse the lines/ the numbers from the rest
     List<String> days = LineSplitter().convert(response.body);
-    for(String element in days){
-
+    for (String element in days) {
       var split = element.split(":");
 
       //create a MediaFileModel with those data
@@ -54,14 +53,12 @@ class StorageGetter {
 
       _dayToFileMap[dayNr] = file;
     }
-
   }
 
   static Future<Widget> getContent(int day) async {
     if (_dayToFileMap.isEmpty) {
       await _mapDaysFromFirebase();
     }
-
 
     if (!_dayToFileMap.containsKey(day)) {
       throw ("The day $day is not saved in the dayToFileMap with ${_dayToFileMap.length} values");
@@ -70,17 +67,21 @@ class StorageGetter {
     var dayFile = _dayToFileMap[day];
 
     if (dayFile.preSave == null) {
-      switch(dayFile.contentType){
-
+      switch (dayFile.contentType) {
         case ContentType.video:
-          var videoController =
-          VideoPlayerController.network(dayFile.url);
+          var videoController = VideoPlayerController.network(dayFile.url);
           await videoController.initialize();
           _dayToFileMap[day].preSave = Chewie(
               controller:
-              ChewieController(videoPlayerController: videoController));          break;
+                  ChewieController(videoPlayerController: videoController));
+          break;
         case ContentType.image:
-          _dayToFileMap[day].preSave = Image.network(dayFile.url);
+          _dayToFileMap[day].preSave = CachedNetworkImage(
+            imageUrl: dayFile.url,
+            placeholder: (context, url) => CircularProgressIndicator(
+              backgroundColor: Colors.blue,
+            ),
+          );
           break;
         case ContentType.unknown:
           throw ("The day $day doesn't have an image or video saved but a ${dayFile.contentType}");
@@ -90,7 +91,7 @@ class StorageGetter {
   }
 
   static String _getUrl(String child) {
-    return _baseUrl+ child +_urlMediaSuffix;
+    return _baseUrl + child + _urlMediaSuffix;
   }
 
   static _initiateFirebase() {
