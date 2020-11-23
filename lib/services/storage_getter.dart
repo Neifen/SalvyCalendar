@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:html';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:video_player/video_player.dart';
@@ -11,11 +12,17 @@ import 'package:salvy_calendar/models/media_file_model.dart';
 
 class StorageGetter {
   static Map<int, MediaFileModel> _dayToFileMap = Map();
-  static fb.StorageReference _baseRef =
-      fb.app().storage().refFromURL("gs://calendarr-260410.appspot.com/Bern");
-  static String _baseUrl = "https://firebasestorage.googleapis.com/v0/b/calendarr-260410.appspot.com/o/Bern%2F";
-  static String _urlMediaSuffix = "?alt=media";
+  static String _baseUrl = "https://firebasestorage.googleapis.com/v0/b/calendarr-260410.appspot.com/o/$_corps%2F";
+  static final String _urlMediaSuffix = "?alt=media";
+  static String _corps;
 
+  static init(String corps) {
+    _corps = corps;
+
+    if (_dayToFileMap.isEmpty) {
+      _mapDaysFromFirebase();
+    }
+  }
 
   static Future<void> _mapDaysFromFirebase() async {
     _initiateFirebase();
@@ -23,15 +30,20 @@ class StorageGetter {
     //first get the overview file
     String url = _getUrl("calendar.txt");
 
-    var response = await get(url);
+    Response response = await get(url);
+      if(response.statusCode!=HttpStatus.ok){
+        if(response.statusCode==HttpStatus.notFound)
+          throw("Either the Corps $_corps doesn't exist or there is no calander.txt defined");
+
+        throw("There was a network error (${response.statusCode})");
+      }
+
+
 
     //then transform and parse the lines/ the numbers from the rest
     List<String> days = LineSplitter().convert(response.body);
-    var stopwatchGetUrl = Stopwatch();
-    var stopwatchGetMeta = Stopwatch();
-    var stopwatchTotal = Stopwatch();
-    stopwatchTotal.start();
     for(String element in days){
+
       var split = element.split(":");
 
       //create a MediaFileModel with those data
