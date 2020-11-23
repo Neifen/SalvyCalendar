@@ -12,12 +12,12 @@ import 'package:salvy_calendar/models/media_file_model.dart';
 
 class StorageGetter {
   static Map<int, MediaFileModel> _dayToFileMap = Map();
-  static String _baseUrl = "https://firebasestorage.googleapis.com/v0/b/calendarr-260410.appspot.com/o/$_korps%2F";
+  static String _baseUrl = "https://firebasestorage.googleapis.com/v0/b/calendarr-260410.appspot.com/o/$_corps%2F";
   static final String _urlMediaSuffix = "?alt=media";
-  static String _korps;
+  static String _corps;
 
-  static init(String korps) {
-    _korps = korps;
+  static init(String corps) {
+    _corps = corps;
 
     if (_dayToFileMap.isEmpty) {
       _mapDaysFromFirebase();
@@ -33,7 +33,7 @@ class StorageGetter {
     Response response = await get(url);
       if(response.statusCode!=HttpStatus.ok){
         if(response.statusCode==HttpStatus.notFound)
-          throw("Either the Korps $_korps doesn't exist or there is no calander.txt defined");
+          throw("Either the Corps $_corps doesn't exist or there is no calander.txt defined");
 
         throw("There was a network error (${response.statusCode})");
       }

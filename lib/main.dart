@@ -20,11 +20,11 @@ class MyApp extends StatelessWidget {
 
     router.define("/:id", handler: Handler(
         handlerFunc: (BuildContext context, Map<String, dynamic> params) {
-          var korpsName = params["id"][0];
-          if(korpsName=='/'){
+          var corpsName = params["id"][0];
+          if(corpsName=='/'){
             return CircularProgressIndicator();
           }
-      return CalendarPage(title: korpsName, korpsName: korpsName);
+      return CalendarPage(title: corpsName, corpsName: corpsName);
     }));
 
     return MaterialApp(
