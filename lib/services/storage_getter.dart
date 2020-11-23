@@ -72,8 +72,9 @@ class StorageGetter {
           var videoController = VideoPlayerController.network(dayFile.url);
           await videoController.initialize();
           _dayToFileMap[day].preSave = Chewie(
-              controller:
-                  ChewieController(videoPlayerController: videoController));
+              controller: ChewieController(
+                  videoPlayerController: videoController,
+                  allowPlaybackSpeedChanging: false));
           break;
         case ContentType.image:
           _dayToFileMap[day].preSave = CachedNetworkImage(
