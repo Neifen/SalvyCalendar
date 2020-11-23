@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:salvy_calendar/services/storage_getter.dart';
 import 'package:salvy_calendar/util/style.dart';
 import 'package:salvy_calendar/util/web_version_info.dart';
 import 'package:salvy_calendar/widgets/big_day_container.dart';
 import 'package:salvy_calendar/widgets/day_container.dart';
 
 class CalendarPage extends StatelessWidget {
-  CalendarPage({Key key, this.title}) : super(key: key);
+
+  CalendarPage({Key key, this.title, String korpsName}) : super(key: key){
+    StorageGetter.init(korpsName);
+  }
 
   final String title;
+
 
   Row createDayRow(int startDay) {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
