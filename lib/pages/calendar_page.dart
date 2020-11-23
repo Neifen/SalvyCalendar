@@ -39,9 +39,7 @@ class CalendarPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Style.backgroundColor,
-      appBar: AppBar(
-        title: Text(title),
-      ),
+      appBar: AppBar(title: Text(title), automaticallyImplyLeading: false),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Center(
