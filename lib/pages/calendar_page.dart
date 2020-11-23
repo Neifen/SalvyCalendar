@@ -45,18 +45,11 @@ class CalendarPage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Center(
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: createDaysList(1),
-                ),
-              ),
-              // TransparentOverlay(),
-              // BigDayContainer()
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: createDaysList(1),
+            ),
           ),
         ),
       ),
