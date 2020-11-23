@@ -7,9 +7,7 @@ import 'package:salvy_calendar/widgets/day_container.dart';
 
 class CalendarPage extends StatelessWidget {
 
-  CalendarPage({Key key, this.title, String corpsName}) : super(key: key){
-    StorageGetter.init(corpsName);
-  }
+  CalendarPage({Key key, this.title}) : super(key: key);
 
   final String title;
 
