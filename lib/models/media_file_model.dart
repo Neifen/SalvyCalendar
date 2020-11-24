@@ -5,15 +5,24 @@ class MediaFileModel {
   String url;
   ContentType contentType;
   int dayNumber;
+  String description = "";
   Widget preSave;
 
-  MediaFileModel(this.dayNumber, this.fileName) {
-    if (this.fileName.endsWith("mp4")) {
+  bool hasDescription() => description.isNotEmpty;
+  MediaFileModel.fromTextFile(String line) {
+    var split = line.split(":");
+
+    //create a MediaFileModel with those data
+    dayNumber = int.parse(split[0]);
+    fileName = split[1];
+    description = split.length > 2 ? split[2] : "";
+
+    if (fileName.endsWith("mp4")) {
       contentType = ContentType.video;
-    } else if (this.fileName.endsWith("jpg") ||
-        this.fileName.endsWith("jpeg") ||
-        this.fileName.endsWith("png") ||
-        this.fileName.endsWith("gif")) {
+    } else if (fileName.endsWith("jpg") ||
+        fileName.endsWith("jpeg") ||
+        fileName.endsWith("png") ||
+        fileName.endsWith("gif")) {
       contentType = ContentType.image;
     } else {
       contentType = ContentType.unknown;
