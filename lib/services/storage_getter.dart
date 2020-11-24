@@ -33,7 +33,7 @@ class StorageGetter {
     Response response = await get(url);
     if (response.statusCode != HttpStatus.ok) {
       if (response.statusCode == HttpStatus.notFound)
-        throw ("Either the Corps $_corps doesn't exist or there is no calander.txt defined");
+        throw ("Either corps $_corps doesn't exist or there is no calendar.txt defined");
 
       throw ("There was a network error (${response.statusCode})");
     }
@@ -41,15 +41,11 @@ class StorageGetter {
     //then transform and parse the lines/ the numbers from the rest
     List<String> days = LineSplitter().convert(response.body);
     for (String element in days) {
-      var split = element.split(":");
-
-      //create a MediaFileModel with those data
-      var dayNr = int.parse(split[0]);
-      var file = MediaFileModel(dayNr, split[1]);
+      var file = MediaFileModel.fromTextFile(element);
 
       file.url = _getUrl(file.fileName);
 
-      _dayToFileMap[dayNr] = file;
+      _dayToFileMap[file.dayNumber] = file;
     }
   }
 
@@ -65,25 +61,34 @@ class StorageGetter {
     var dayFile = _dayToFileMap[day];
 
     if (dayFile.preSave == null) {
+      List<Widget> column = [];
       switch (dayFile.contentType) {
         case ContentType.video:
           var videoController = VideoPlayerController.network(dayFile.url);
           await videoController.initialize();
-          _dayToFileMap[day].preSave = Chewie(
+          column.add(Chewie(
               controller: ChewieController(
                   videoPlayerController: videoController,
-                  allowPlaybackSpeedChanging: false));
+                  allowPlaybackSpeedChanging: false)));
           break;
         case ContentType.image:
-          _dayToFileMap[day].preSave = CachedNetworkImage(
+          column.add(CachedNetworkImage(
             imageUrl: dayFile.url,
             placeholder: (context, url) => CircularProgressIndicator(
               backgroundColor: Colors.blue,
             ),
-          );
+          ));
           break;
         case ContentType.unknown:
           throw ("The day $day doesn't have an image or video saved but a ${dayFile.contentType}");
+      }
+      if (dayFile.hasDescription()) {
+        column.add(Text(dayFile.description));
+        _dayToFileMap[day].preSave = Column(
+          children: column,
+        );
+      } else {
+        _dayToFileMap[day].preSave = column[0];
       }
     }
     return dayFile.preSave;
