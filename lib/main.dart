@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:salvy_calendar/services/route_serivce.dart';
 import 'package:salvy_calendar/states/day_state.dart';
-import 'package:salvy_calendar/util/style.dart';
 
 void main() {
   runApp(ChangeNotifierProvider(
@@ -22,10 +21,10 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           bottomSheetTheme:
               BottomSheetThemeData(backgroundColor: Colors.transparent),
-          primarySwatch: Style.primaryColor,
+          primarySwatch: Colors.red,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        initialRoute: '/Bern',
+        initialRoute: '/Bern/13',
         onGenerateRoute: _router.generator);
   }
 }
