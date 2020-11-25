@@ -1,30 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:salvy_calendar/services/cookie_service.dart';
 import 'package:salvy_calendar/util/style.dart';
 import 'package:salvy_calendar/util/web_version_info.dart';
 import 'package:salvy_calendar/widgets/day_container.dart';
 
 class CalendarPage extends StatelessWidget {
-  CalendarPage({Key key, this.title}) : super(key: key);
+  List<String> dayOrder;
+
+  CalendarPage({Key key, this.title}) : super(key: key) {
+    loadDayOrders();
+  }
+
+  Future<List<String>> loadDayOrders() async {
+    if (dayOrder == null) {
+      var cookies = await CookieService.getInstance();
+      if (cookies.has(CookieService.DAY_LIST)) {
+        dayOrder = cookies.loadList(CookieService.DAY_LIST);
+      } else {
+        dayOrder = List.generate(24, (index) => index.toString());
+        dayOrder.shuffle();
+        cookies.saveList(CookieService.DAY_LIST, dayOrder);
+      }
+    }
+    return dayOrder;
+  }
 
   final String title;
 
-  Row createDayRow(int startDay) {
-    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      DayContainer(startDay++),
-      DayContainer(startDay++),
-      DayContainer(startDay++),
-      DayContainer(startDay++),
-    ]);
+  Row createDayRow(List<String> list) {
+    List<Widget> newList = list.map((e) => DayContainer(e)).toList();
+    return Row(mainAxisAlignment: MainAxisAlignment.center, children: newList);
   }
 
-  List<Widget> createDaysList(int startDay) {
+  List<Widget> createDaysList(List<String> dayList) {
     return [
-      createDayRow(startDay),
-      createDayRow(startDay = startDay + 4),
-      createDayRow(startDay = startDay + 4),
-      createDayRow(startDay = startDay + 4),
-      createDayRow(startDay = startDay + 4),
-      createDayRow(startDay = startDay + 4),
+      createDayRow(dayList.sublist(0, 4)),
+      createDayRow(dayList.sublist(4, 8)),
+      createDayRow(dayList.sublist(8, 12)),
+      createDayRow(dayList.sublist(12, 16)),
+      createDayRow(dayList.sublist(16, 20)),
+      createDayRow(dayList.sublist(20, 24)),
     ];
   }
 
@@ -44,9 +59,14 @@ class CalendarPage extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Center(
           child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: createDaysList(1),
+            child: FutureBuilder(
+              future: loadDayOrders(),
+              builder: (context, snapshot) => snapshot.hasData
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: createDaysList(snapshot.data),
+                    )
+                  : CircularProgressIndicator(),
             ),
           ),
         ),

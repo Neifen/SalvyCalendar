@@ -2,5 +2,5 @@ class DayModel {
   final String title;
   final int day;
 
-  DayModel(this.day) : this.title = day.toString();
+  DayModel(this.title) : this.day = int.parse(title);
 }

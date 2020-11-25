@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:salvy_calendar/services/route_serivce.dart';
-import 'package:salvy_calendar/states/day_state.dart';
 
 void main() {
-  runApp(ChangeNotifierProvider(
-    create: (_) => DayState(),
-    child: MyApp(),
-  ));
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
