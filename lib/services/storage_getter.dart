@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:html';
 
-import 'package:chewie/chewie.dart';
 import 'package:firebase/firebase.dart' as fb;
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:salvy_calendar/models/media_file_model.dart';
+import 'package:salvy_calendar/widgets/play_pause_overlay.dart';
 import 'package:video_player/video_player.dart';
 
 class StorageGetter {
@@ -38,7 +38,7 @@ class StorageGetter {
     }
 
     //then transform and parse the lines/ the numbers from the rest
-    List<String> days = LineSplitter().convert(response.body);
+    List<String> days = LineSplitter().convert(utf8.decode(response.bodyBytes));
     for (String element in days) {
       var file = MediaFileModel.fromTextFile(element);
 
@@ -52,7 +52,6 @@ class StorageGetter {
     if (_dayToFileMap.isEmpty) {
       await _mapDaysFromFirebase();
     }
-    print(_dayToFileMap.length);
 
     if (!_dayToFileMap.containsKey(day)) {
       throw ("The day $day is not saved in the dayToFileMap with ${_dayToFileMap.length} values");
@@ -65,10 +64,20 @@ class StorageGetter {
         case ContentType.video:
           var videoController = VideoPlayerController.network(dayFile.url);
           await videoController.initialize();
-          dayFile.media = Chewie(
-              controller: ChewieController(
-                  videoPlayerController: videoController,
-                  allowPlaybackSpeedChanging: false));
+          videoController.setLooping(true);
+
+          dayFile.media = AspectRatio(
+              aspectRatio: videoController.value.aspectRatio,
+              child: Stack(children: [
+                VideoPlayer(videoController),
+                PlayPauseOverlay(
+                  controller: videoController,
+                ),
+                VideoProgressIndicator(
+                  videoController,
+                  allowScrubbing: true,
+                ),
+              ]));
           break;
         case ContentType.image:
           var data = await get(dayFile.url);
@@ -79,8 +88,6 @@ class StorageGetter {
           throw ("The day $day doesn't have an image or video saved but a ${dayFile.contentType}");
       }
     }
-
-    print(dayFile.toString());
 
     return dayFile;
   }

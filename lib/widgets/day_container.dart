@@ -18,7 +18,6 @@ class DayContainer extends StatelessWidget {
       child: InkWell(
         onTap: () {
           if (DayService.isDayAvailable(_dayModel)) {
-            print("tap on $_dayModel");
             BigDayDialog(_dayModel).showAsHero(context);
           }
         },
@@ -42,27 +41,9 @@ class DayContainer extends StatelessWidget {
                     border: Border.all(color: DayService.getColor(_dayModel))),
                 child: Stack(
                   children: [
-                    positionDeco(
-                        _dayModel.day,
-                        1,
-                        Icon(
-                          Icons.star,
-                          color: Style.decoColor,
-                        )),
-                    positionDeco(
-                        _dayModel.day,
-                        2,
-                        Icon(
-                          Icons.star,
-                          color: Style.decoColor,
-                        )),
-                    positionDeco(
-                        _dayModel.day,
-                        3,
-                        Icon(
-                          Icons.star,
-                          color: Style.decoColor,
-                        )),
+                    positionDeco(_dayModel.day, 1, context),
+                    positionDeco(_dayModel.day, 2, context),
+                    positionDeco(_dayModel.day, 3, context),
                     Center(
                         child: Text(
                       _dayModel.title,
@@ -78,16 +59,36 @@ class DayContainer extends StatelessWidget {
     );
   }
 
-  Widget positionDeco(int day, int nr, Widget child) {
+  convertForScreen(double size, BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+
+    return size * width / 375;
+  }
+
+  Widget positionDeco(int day, int nr, BuildContext context) {
     var point = Style.randomPoints[(day - 1) % 12];
+    var child = Icon(
+      Icons.star,
+      color: Style.decoColor,
+      size: convertForScreen(20.0, context),
+    );
 
     switch (nr) {
       case 1:
-        return Positioned(child: child, top: point[0].x, left: point[0].y);
+        return Positioned(
+            child: child,
+            top: convertForScreen(point[0].x, context),
+            left: convertForScreen(point[0].y, context));
       case 2:
-        return Positioned(child: child, top: point[1].x, right: point[1].y);
+        return Positioned(
+            child: child,
+            top: convertForScreen(point[1].x, context),
+            right: convertForScreen(point[1].y, context));
       default:
-        return Positioned(child: child, left: point[2].x, bottom: point[2].y);
+        return Positioned(
+            child: child,
+            left: convertForScreen(point[2].x, context),
+            bottom: convertForScreen(point[2].y, context));
     }
   }
 }
