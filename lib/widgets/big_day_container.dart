@@ -55,7 +55,6 @@ class BigDayDialog {
   }
 
   Widget getDialogContent() {
-    print("building bigdaycontainer");
     return AspectRatio(
       aspectRatio: 1.0,
       child: Hero(
@@ -111,6 +110,8 @@ class BigDayDialog {
                     Text(model.description, style: Style.descriptionTextStyle)),
           ));
       columns.add(description);
+    } else {
+      columns.add(Expanded(flex: 1, child: Container()));
     }
 
     return Center(
