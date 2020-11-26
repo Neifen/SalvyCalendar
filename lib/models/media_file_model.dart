@@ -6,7 +6,7 @@ class MediaFileModel {
   ContentType contentType;
   int dayNumber;
   String description = "";
-  Widget preSave;
+  Widget media;
 
   bool hasDescription() => description.isNotEmpty;
   MediaFileModel.fromTextFile(String line) {
