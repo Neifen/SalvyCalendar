@@ -8,10 +8,13 @@ class Style {
   static const primaryColor = Color(0xffb71c1c);
   static const todayColor = Color(0xffb71c1c);
   static const unavailableColor = Color(0xffA55050);
-  static const deco = Color(0xddffffff);
+  static const decoColor = Color(0xddffffff);
 
   static const buttonTextStyle =
       TextStyle(color: Colors.white, fontFamily: 'ProzaLibre', fontSize: 22.0);
+  static const descriptionTextStyle =
+      TextStyle(color: Colors.white, fontFamily: 'ProzaLibre', fontSize: 17.0);
+
   static const infoTextStyle = TextStyle(color: Color(0xffb71c1c));
 
   static const List randomPoints = [

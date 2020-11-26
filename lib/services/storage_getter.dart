@@ -1,10 +1,9 @@
 import 'dart:convert';
 import 'dart:html';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:firebase/firebase.dart' as fb;
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:salvy_calendar/models/media_file_model.dart';
 import 'package:video_player/video_player.dart';
@@ -49,10 +48,11 @@ class StorageGetter {
     }
   }
 
-  static Future<Widget> getContent(int day) async {
+  static Future<MediaFileModel> getContent(int day) async {
     if (_dayToFileMap.isEmpty) {
       await _mapDaysFromFirebase();
     }
+    print(_dayToFileMap.length);
 
     if (!_dayToFileMap.containsKey(day)) {
       throw ("The day $day is not saved in the dayToFileMap with ${_dayToFileMap.length} values");
@@ -60,38 +60,29 @@ class StorageGetter {
 
     var dayFile = _dayToFileMap[day];
 
-    if (dayFile.preSave == null) {
-      List<Widget> column = [];
+    if (dayFile.media == null) {
       switch (dayFile.contentType) {
         case ContentType.video:
           var videoController = VideoPlayerController.network(dayFile.url);
           await videoController.initialize();
-          column.add(Chewie(
+          dayFile.media = Chewie(
               controller: ChewieController(
                   videoPlayerController: videoController,
-                  allowPlaybackSpeedChanging: false)));
+                  allowPlaybackSpeedChanging: false));
           break;
         case ContentType.image:
-          column.add(CachedNetworkImage(
-            imageUrl: dayFile.url,
-            placeholder: (context, url) => CircularProgressIndicator(
-              backgroundColor: Colors.blue,
-            ),
-          ));
+          var data = await get(dayFile.url);
+          dayFile.media = Image.memory(data.bodyBytes);
+
           break;
         case ContentType.unknown:
           throw ("The day $day doesn't have an image or video saved but a ${dayFile.contentType}");
       }
-      if (dayFile.hasDescription()) {
-        column.add(Text(dayFile.description));
-        _dayToFileMap[day].preSave = Column(
-          children: column,
-        );
-      } else {
-        _dayToFileMap[day].preSave = column[0];
-      }
     }
-    return dayFile.preSave;
+
+    print(dayFile.toString());
+
+    return dayFile;
   }
 
   static String _getUrl(String child) {

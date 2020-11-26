@@ -1,5 +1,4 @@
 import 'dart:html';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -19,7 +18,8 @@ class DayContainer extends StatelessWidget {
       child: InkWell(
         onTap: () {
           if (DayService.isDayAvailable(_dayModel)) {
-            BigDayContainer(_dayModel).showAsHero(context);
+            print("tap on $_dayModel");
+            BigDayDialog(_dayModel).showAsHero(context);
           }
         },
         child: AspectRatio(
@@ -47,21 +47,21 @@ class DayContainer extends StatelessWidget {
                         1,
                         Icon(
                           Icons.star,
-                          color: Style.deco,
+                          color: Style.decoColor,
                         )),
                     positionDeco(
                         _dayModel.day,
                         2,
                         Icon(
                           Icons.star,
-                          color: Style.deco,
+                          color: Style.decoColor,
                         )),
                     positionDeco(
                         _dayModel.day,
                         3,
                         Icon(
                           Icons.star,
-                          color: Style.deco,
+                          color: Style.decoColor,
                         )),
                     Center(
                         child: Text(
@@ -76,32 +76,6 @@ class DayContainer extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Widget getRandomPlacement(Widget child) {
-    const size = 8;
-
-    var columns = List<Widget>(size);
-    columns.fillRange(0, size, Expanded(child: Container()));
-
-    var rows = List<Widget>(size);
-    rows.fillRange(0, size, Expanded(child: Container()));
-
-    var columnNr = Random().nextInt(size);
-    var rowNr;
-    do {
-      rowNr = Random().nextInt(size);
-    } while ((columnNr >= 3 && columnNr <= 6) && (rowNr >= 3 && rowNr <= 6));
-
-    rows[rowNr] = child;
-    var rowWidget = Row(children: rows);
-    columns[columnNr] = rowWidget;
-
-    var columnWidget = Column(
-      children: columns,
-    );
-
-    return columnWidget;
   }
 
   Widget positionDeco(int day, int nr, Widget child) {
