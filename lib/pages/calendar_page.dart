@@ -17,7 +17,7 @@ class CalendarPage extends StatelessWidget {
       if (cookies.has(CookieService.DAY_LIST)) {
         dayOrder = cookies.loadList(CookieService.DAY_LIST);
       } else {
-        dayOrder = List.generate(24, (index) => index.toString());
+        dayOrder = List.generate(24, (index) => (index + 1).toString());
         dayOrder.shuffle();
         cookies.saveList(CookieService.DAY_LIST, dayOrder);
       }

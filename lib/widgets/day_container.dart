@@ -42,23 +42,26 @@ class DayContainer extends StatelessWidget {
                     border: Border.all(color: DayService.getColor(_dayModel))),
                 child: Stack(
                   children: [
-                    getRandomPlacements(
+                    positionDeco(
+                        _dayModel.day,
                         1,
                         Icon(
                           Icons.star,
-                          color: Colors.white,
+                          color: Style.deco,
                         )),
-                    getRandomPlacements(
+                    positionDeco(
+                        _dayModel.day,
                         2,
                         Icon(
                           Icons.star,
-                          color: Colors.white,
+                          color: Style.deco,
                         )),
-                    getRandomPlacements(
+                    positionDeco(
+                        _dayModel.day,
                         3,
                         Icon(
                           Icons.star,
-                          color: Colors.white,
+                          color: Style.deco,
                         )),
                     Center(
                         child: Text(
@@ -101,26 +104,16 @@ class DayContainer extends StatelessWidget {
     return columnWidget;
   }
 
-  Widget getRandomPlacements(int nr, Widget child) {
-    const randomPoints = [
-      Point(20.0, 5.0),
-      Point(31.0, 10.0),
-      Point(50.0, 15.0),
-      Point(15.0, 10.0),
-      Point(10.0, 5.0),
-      Point(20.0, 15.0)
-    ];
-
-    var index = Random().nextInt(randomPoints.length);
-    var point = randomPoints[index];
+  Widget positionDeco(int day, int nr, Widget child) {
+    var point = Style.randomPoints[(day - 1) % 12];
 
     switch (nr) {
       case 1:
-        return Positioned(child: child, top: point.x, left: point.y);
+        return Positioned(child: child, top: point[0].x, left: point[0].y);
       case 2:
-        return Positioned(child: child, top: point.x, right: point.y);
+        return Positioned(child: child, top: point[1].x, right: point[1].y);
       default:
-        return Positioned(child: child, left: point.x, bottom: point.y);
+        return Positioned(child: child, left: point[2].x, bottom: point[2].y);
     }
   }
 }
