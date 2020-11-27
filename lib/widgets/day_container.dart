@@ -59,36 +59,30 @@ class DayContainer extends StatelessWidget {
     );
   }
 
-  convertForScreen(double size, BuildContext context) {
-    var width = MediaQuery.of(context).size.width;
-
-    return size * width / 375;
-  }
-
   Widget positionDeco(int day, int nr, BuildContext context) {
     var point = Style.randomPoints[(day - 1) % 12];
     var child = Icon(
       Icons.star,
       color: Style.decoColor,
-      size: convertForScreen(20.0, context),
+      size: Style.convertForScreen(20.0, context),
     );
 
     switch (nr) {
       case 1:
         return Positioned(
             child: child,
-            top: convertForScreen(point[0].x, context),
-            left: convertForScreen(point[0].y, context));
+            top: Style.convertForScreen(point[0].x, context),
+            left: Style.convertForScreen(point[0].y, context));
       case 2:
         return Positioned(
             child: child,
-            top: convertForScreen(point[1].x, context),
-            right: convertForScreen(point[1].y, context));
+            top: Style.convertForScreen(point[1].x, context),
+            right: Style.convertForScreen(point[1].y, context));
       default:
         return Positioned(
             child: child,
-            left: convertForScreen(point[2].x, context),
-            bottom: convertForScreen(point[2].y, context));
+            left: Style.convertForScreen(point[2].x, context),
+            bottom: Style.convertForScreen(point[2].y, context));
     }
   }
 }

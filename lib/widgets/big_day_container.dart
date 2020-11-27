@@ -76,7 +76,7 @@ class BigDayDialog {
                         if (snapshot.hasError) {
                           return Text(snapshot.error);
                         }
-                        return displayMedia(snapshot.data);
+                        return displayMedia(snapshot.data, context);
                       case ConnectionState.active:
                       case ConnectionState.none:
                       case ConnectionState.waiting:
@@ -91,7 +91,7 @@ class BigDayDialog {
     );
   }
 
-  Widget displayMedia(MediaFileModel model) {
+  Widget displayMedia(MediaFileModel model, BuildContext context) {
     List<Widget> columns = [];
     columns.add(Expanded(
       flex: 1,
@@ -105,9 +105,15 @@ class BigDayDialog {
           child: Align(
             alignment: Alignment.topLeft,
             child: Padding(
-                padding: EdgeInsets.only(top: 22.0, left: 12.0, right: 12.0),
-                child:
-                    Text(model.description, style: Style.descriptionTextStyle)),
+                padding: EdgeInsets.only(
+                    top: Style.convertForScreen(10.0, context),
+                    left: Style.convertForScreen(4.0, context),
+                    right: Style.convertForScreen(4.0, context)),
+                child: Text(model.description,
+                    style: TextStyle(
+                        color: Style.textColor,
+                        fontFamily: Style.descriptionFontfamily,
+                        fontSize: Style.convertForScreen(10.0, context)))),
           ));
       columns.add(description);
     } else {

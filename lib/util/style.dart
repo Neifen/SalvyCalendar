@@ -9,11 +9,11 @@ class Style {
   static const todayColor = Color(0xffb71c1c);
   static const unavailableColor = Color(0xffA55050);
   static const decoColor = Color(0xddffffff);
+  static const textColor = Color(0xffffffff);
 
   static const buttonTextStyle =
-      TextStyle(color: Colors.white, fontFamily: 'ProzaLibre', fontSize: 22.0);
-  static const descriptionTextStyle =
-      TextStyle(color: Colors.white, fontFamily: 'ProzaLibre', fontSize: 17.0);
+      TextStyle(color: textColor, fontFamily: 'ProzaLibre', fontSize: 22.0);
+  static const descriptionFontfamily = 'ProzaLibre';
 
   static const infoTextStyle = TextStyle(color: Color(0xffb71c1c));
 
@@ -31,4 +31,10 @@ class Style {
     [Point(20.0, 2.0), Point(15.0, 3.0), Point(31.0, 7.0)], //11, 23
     [Point(35.0, 6.0), Point(8.0, 10.0), Point(42.0, 5.0)], //12, 24
   ];
+
+  static convertForScreen(double size, BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+
+    return size * width / 375;
+  }
 }
