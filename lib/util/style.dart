@@ -11,11 +11,15 @@ class Style {
   static const decoColor = Color(0xddffffff);
   static const textColor = Color(0xffffffff);
 
-  static const buttonTextStyle =
-      TextStyle(color: textColor, fontFamily: 'ProzaLibre', fontSize: 22.0);
   static const descriptionFontfamily = 'ProzaLibre';
 
-  static const infoTextStyle = TextStyle(color: Color(0xffb71c1c));
+  static const buttonTextStyle = TextStyle(
+      color: textColor, fontFamily: descriptionFontfamily, fontSize: 22.0);
+  static const titleTextSTyle = TextStyle(
+      color: primaryColor, fontFamily: descriptionFontfamily, fontSize: 32.0);
+
+  static const infoTextStyle =
+      TextStyle(color: Color(0xffb71c1c), fontSize: 10.0);
 
   static const List randomPoints = [
     [Point(14.0, 5.0), Point(25.0, 4.0), Point(19.0, 5.0)], //1,13
