@@ -45,28 +45,38 @@ class CalendarPage extends StatelessWidget {
 
   String getVersionNr() {
     //could be async in future if package_info allows web tow ork
-    if (!WebVersionInfo.showVersion) return "";
+    if (!WebVersionInfo.showVersion)
+      return "created by Nathan Bourquin - neifen.b@gmail.com";
 
-    return "${WebVersionInfo.name} + ${WebVersionInfo.build}";
+    return "created by Nathan Bourquin - neifen.b@gmail.com - ${WebVersionInfo.name}";
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Style.backgroundColor,
-      appBar: AppBar(title: Text(title), automaticallyImplyLeading: false),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Center(
           child: SingleChildScrollView(
-            child: FutureBuilder(
-              future: loadDayOrders(),
-              builder: (context, snapshot) => snapshot.hasData
-                  ? Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: createDaysList(snapshot.data),
-                    )
-                  : CircularProgressIndicator(),
+            child: Column(
+              children: [
+                Align(
+                    alignment: Alignment.topCenter,
+                    child: Text(
+                      "Adventskalender",
+                      style: Style.titleTextSTyle,
+                    )),
+                FutureBuilder(
+                  future: loadDayOrders(),
+                  builder: (context, snapshot) => snapshot.hasData
+                      ? Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: createDaysList(snapshot.data),
+                        )
+                      : CircularProgressIndicator(),
+                ),
+              ],
             ),
           ),
         ),

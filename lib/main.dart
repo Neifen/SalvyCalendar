@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.red,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        initialRoute: '/Bern/13',
+        initialRoute: '/Bern',
         onGenerateRoute: _router.generator);
   }
 }
