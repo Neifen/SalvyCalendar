@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:html';
 
@@ -65,23 +66,34 @@ class StorageGetter {
           var videoController = VideoPlayerController.network(dayFile.url);
           await videoController.initialize();
           videoController.setLooping(true);
-
           dayFile.media = AspectRatio(
-              aspectRatio: videoController.value.aspectRatio,
-              child: Stack(children: [
-                VideoPlayer(videoController),
-                PlayPauseOverlay(
-                  controller: videoController,
-                ),
-                VideoProgressIndicator(
-                  videoController,
-                  allowScrubbing: true,
-                ),
-              ]));
+            aspectRatio: videoController.value.aspectRatio,
+            child: Stack(children: [
+              VideoPlayer(videoController),
+              PlayPauseOverlay(
+                controller: videoController,
+              ),
+              VideoProgressIndicator(
+                videoController,
+                allowScrubbing: true,
+              ),
+            ]),
+          );
           break;
         case ContentType.image:
           var data = await get(dayFile.url);
-          dayFile.media = Image.memory(data.bodyBytes);
+          Image image = Image.memory(
+            data.bodyBytes,
+          );
+          Completer<double> completer = new Completer<double>();
+
+          image.image
+              .resolve(ImageConfiguration())
+              .addListener(ImageStreamListener((info, _) {
+            completer.complete((info.image.width / info.image.height) - 0.5);
+          }));
+          await completer.future;
+          dayFile.media = image;
 
           break;
         case ContentType.unknown:

@@ -11,18 +11,6 @@ import 'my_progress_indicator.dart';
 class BigDayDialog {
   final DayModel selectedDay;
 
-  void showAsAlert(BuildContext context) {
-    AlertDialog dialog = new AlertDialog(
-      backgroundColor: Style.primaryColor,
-      content: getDialogContent(),
-    );
-
-    showDialog(
-      context: context,
-      child: dialog,
-    );
-  }
-
   void showAsHero(BuildContext context) {
     AlertDialog dialog = new AlertDialog(
       backgroundColor: Style.primaryColor,
@@ -38,23 +26,20 @@ class BigDayDialog {
         }));
   }
 
-  void showWithAnimation(BuildContext context) {
-    AlertDialog dialog = new AlertDialog(
-      backgroundColor: Style.primaryColor,
-      content: getDialogContent(),
-    );
-
-    showGeneralDialog(
-      context: context,
-      barrierLabel: "close",
-      barrierDismissible: true,
-      pageBuilder: (context, animation, secondaryAnimation) {},
-      transitionBuilder: (context, animation, secondaryAnimation, child) =>
-          Transform.scale(scale: animation.value, child: dialog),
-    );
+  Widget getDialogContent() {
+    return DialogContent(selectedDay);
   }
 
-  Widget getDialogContent() {
+  BigDayDialog(this.selectedDay);
+}
+
+class DialogContent extends StatelessWidget {
+  final DayModel selectedDay;
+
+  DialogContent(this.selectedDay);
+
+  @override
+  Widget build(BuildContext context) {
     return AspectRatio(
       aspectRatio: 1.0,
       child: Hero(
@@ -127,6 +112,4 @@ class BigDayDialog {
       ),
     );
   }
-
-  BigDayDialog(this.selectedDay);
 }
