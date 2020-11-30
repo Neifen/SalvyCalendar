@@ -17,7 +17,7 @@ class MediaFileModel {
     fileName = split[1];
     description = split.length > 2 ? split[2] : "";
 
-    if (fileName.endsWith("mp4")) {
+    if (fileName.endsWith("mp4") || fileName.endsWith("mov")) {
       contentType = ContentType.video;
     } else if (fileName.endsWith("jpg") ||
         fileName.endsWith("jpeg") ||
