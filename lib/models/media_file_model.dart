@@ -6,16 +6,17 @@ class MediaFileModel {
   ContentType contentType;
   int dayNumber;
   String description = "";
+  double ratio = 0.0;
   Widget media;
 
   bool hasDescription() => description.isNotEmpty;
-  MediaFileModel.fromTextFile(String line) {
-    var split = line.split(":");
-
+  MediaFileModel.fromJsonMap(MapEntry<String, dynamic> entry) {
+    dynamic value = entry.value;
     //create a MediaFileModel with those data
-    dayNumber = int.parse(split[0]);
-    fileName = split[1];
-    description = split.length > 2 ? split[2] : "";
+    dayNumber = int.parse(entry.key);
+    fileName = value['file'][0];
+    description = value['desc'] ?? "";
+    ratio = value['ratio'] != null ? double.parse(value['ratio']) : 0.0;
 
     if (fileName.endsWith("mp4") || fileName.endsWith("mov")) {
       contentType = ContentType.video;

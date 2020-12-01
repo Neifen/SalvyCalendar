@@ -6,8 +6,7 @@ import 'package:firebase/firebase.dart' as fb;
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:salvy_calendar/models/media_file_model.dart';
-import 'package:salvy_calendar/widgets/play_pause_overlay.dart';
-import 'package:video_player/video_player.dart';
+import 'package:salvy_calendar/widgets/video_widget.dart';
 
 class StorageGetter {
   static Map<int, MediaFileModel> _dayToFileMap = Map();
@@ -28,7 +27,7 @@ class StorageGetter {
     _initiateFirebase();
 
     //first get the overview file
-    String url = _getUrl("calendar.txt");
+    String url = _getUrl("calendar.json");
 
     Response response = await get(url);
     if (response.statusCode != HttpStatus.ok) {
@@ -39,17 +38,23 @@ class StorageGetter {
     }
 
     //then transform and parse the lines/ the numbers from the rest
-    List<String> days = LineSplitter().convert(utf8.decode(response.bodyBytes));
-    for (String element in days) {
-      var file = MediaFileModel.fromTextFile(element);
+
+    Map<String, dynamic> days = jsonDecode(utf8.decode(response.bodyBytes));
+
+    for (MapEntry<String, dynamic> element in days.entries) {
+      var file = MediaFileModel.fromJsonMap(element);
 
       file.url = _getUrl(file.fileName);
 
       _dayToFileMap[file.dayNumber] = file;
     }
+    print(
+        "All calendar items are loaded, there is ${_dayToFileMap.length} days");
   }
 
   static Future<MediaFileModel> getContent(int day) async {
+    print("Get Content for day $day");
+
     if (_dayToFileMap.isEmpty) {
       await _mapDaysFromFirebase();
     }
@@ -63,23 +68,9 @@ class StorageGetter {
     if (dayFile.media == null) {
       switch (dayFile.contentType) {
         case ContentType.video:
-          var videoController = VideoPlayerController.network(dayFile.url);
-          await videoController.initialize();
-          videoController.setLooping(true);
-          dayFile.media = AspectRatio(
-            aspectRatio: videoController.value.aspectRatio,
-            child: Stack(children: [
-              VideoPlayer(videoController),
-              PlayPauseOverlay(
-                controller: videoController,
-              ),
-              VideoProgressIndicator(
-                videoController,
-                allowScrubbing: true,
-              ),
-            ]),
-          );
+          dayFile.media = VideoWidget(dayFile);
           break;
+
         case ContentType.image:
           var data = await get(dayFile.url);
           Image image = Image.memory(
