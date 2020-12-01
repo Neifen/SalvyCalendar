@@ -6,7 +6,7 @@ import 'package:firebase/firebase.dart' as fb;
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:salvy_calendar/models/media_file_model.dart';
-import 'package:salvy_calendar/widgets/play_pause_overlay.dart';
+import 'package:salvy_calendar/widgets/video_widget.dart';
 import 'package:video_player/video_player.dart';
 
 class StorageGetter {
@@ -75,19 +75,8 @@ class StorageGetter {
           }).catchError((error) =>
               throw "There has been an error initializing the video player: ${error.toString()}");
           await completer.future;
-          dayFile.media = AspectRatio(
-            aspectRatio: videoController.value.aspectRatio,
-            child: Stack(children: [
-              VideoPlayer(videoController),
-              PlayPauseOverlay(
-                controller: videoController,
-              ),
-              VideoProgressIndicator(
-                videoController,
-                allowScrubbing: true,
-              ),
-            ]),
-          );
+
+          dayFile.media = VideoWidget(videoController);
           break;
         case ContentType.image:
           var data = await get(dayFile.url);
