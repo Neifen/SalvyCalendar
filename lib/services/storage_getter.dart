@@ -47,9 +47,13 @@ class StorageGetter {
 
       _dayToFileMap[file.dayNumber] = file;
     }
+    print(
+        "All calendar items are loaded, there is ${_dayToFileMap.length} days");
   }
 
   static Future<MediaFileModel> getContent(int day) async {
+    print("Get Content for day $day");
+
     if (_dayToFileMap.isEmpty) {
       await _mapDaysFromFirebase();
     }
@@ -64,7 +68,13 @@ class StorageGetter {
       switch (dayFile.contentType) {
         case ContentType.video:
           var videoController = VideoPlayerController.network(dayFile.url);
-          await videoController.initialize();
+          Completer completer = new Completer();
+
+          videoController.initialize().then((value) {
+            completer.complete();
+          }).catchError((error) =>
+              throw "There has been an error initializing the video player: ${error.toString()}");
+          await completer.future;
           videoController.setLooping(true);
           dayFile.media = AspectRatio(
             aspectRatio: videoController.value.aspectRatio,
