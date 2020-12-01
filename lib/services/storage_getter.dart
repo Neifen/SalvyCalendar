@@ -75,7 +75,6 @@ class StorageGetter {
           }).catchError((error) =>
               throw "There has been an error initializing the video player: ${error.toString()}");
           await completer.future;
-          videoController.setLooping(true);
           dayFile.media = AspectRatio(
             aspectRatio: videoController.value.aspectRatio,
             child: Stack(children: [
