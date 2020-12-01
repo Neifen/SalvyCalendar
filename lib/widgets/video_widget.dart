@@ -1,29 +1,39 @@
 import 'dart:html';
+import 'dart:ui' as ui;
 
 import 'package:flutter/widgets.dart';
-import 'package:video_player/video_player.dart';
-
-import 'play_pause_overlay.dart';
+import 'package:salvy_calendar/models/media_file_model.dart';
 
 class VideoWidget extends StatelessWidget {
-  final VideoPlayerController _videoController;
-  VideoElement video;
+  final MediaFileModel dayFile;
 
-  VideoWidget(this._videoController);
+  VideoWidget(this.dayFile);
 
   @override
   Widget build(BuildContext context) {
+    VideoElement video;
+
+    // ignore:undefined_prefixed_name
+    ui.platformViewRegistry.registerViewFactory(dayFile.url, (int viewId) {
+      video = VideoElement()
+        ..id = 'videoPlayer${DateTime.now().millisecondsSinceEpoch}'
+        // ..width = widget.width
+        // ..height = widget.height
+        ..src = dayFile.url
+        ..autoplay = false
+        ..controls = true
+        ..disableRemotePlayback = true
+        ..style.border = 'none';
+      video.attributes['controlsList'] = 'nodownload';
+
+      return video;
+    });
+
     return AspectRatio(
-      aspectRatio: _videoController.value.aspectRatio,
+      aspectRatio: dayFile.ratio,
       child: Stack(children: [
-        VideoPlayer(_videoController),
-        PlayPauseOverlay(
-          controller: _videoController,
-        ),
-        VideoProgressIndicator(
-          _videoController,
-          allowScrubbing: true,
-        ),
+        // VideoPlayer(_videoController),
+        HtmlElementView(viewType: dayFile.url),
       ]),
     );
   }

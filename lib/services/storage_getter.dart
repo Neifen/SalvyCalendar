@@ -7,7 +7,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:salvy_calendar/models/media_file_model.dart';
 import 'package:salvy_calendar/widgets/video_widget.dart';
-import 'package:video_player/video_player.dart';
 
 class StorageGetter {
   static Map<int, MediaFileModel> _dayToFileMap = Map();
@@ -28,7 +27,7 @@ class StorageGetter {
     _initiateFirebase();
 
     //first get the overview file
-    String url = _getUrl("calendar.txt");
+    String url = _getUrl("calendar.json");
 
     Response response = await get(url);
     if (response.statusCode != HttpStatus.ok) {
@@ -39,9 +38,11 @@ class StorageGetter {
     }
 
     //then transform and parse the lines/ the numbers from the rest
-    List<String> days = LineSplitter().convert(utf8.decode(response.bodyBytes));
-    for (String element in days) {
-      var file = MediaFileModel.fromTextFile(element);
+
+    Map<String, dynamic> days = jsonDecode(utf8.decode(response.bodyBytes));
+
+    for (MapEntry<String, dynamic> element in days.entries) {
+      var file = MediaFileModel.fromJsonMap(element);
 
       file.url = _getUrl(file.fileName);
 
@@ -67,17 +68,9 @@ class StorageGetter {
     if (dayFile.media == null) {
       switch (dayFile.contentType) {
         case ContentType.video:
-          var videoController = VideoPlayerController.network(dayFile.url);
-          Completer completer = new Completer();
-
-          videoController.initialize().then((value) {
-            completer.complete();
-          }).catchError((error) =>
-              throw "There has been an error initializing the video player: ${error.toString()}");
-          await completer.future;
-
-          dayFile.media = VideoWidget(videoController);
+          dayFile.media = VideoWidget(dayFile);
           break;
+
         case ContentType.image:
           var data = await get(dayFile.url);
           Image image = Image.memory(
