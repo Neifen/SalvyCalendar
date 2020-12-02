@@ -98,7 +98,7 @@ class DialogContent extends StatelessWidget {
                     style: TextStyle(
                         color: Style.textColor,
                         fontFamily: Style.descriptionFontfamily,
-                        fontSize: Style.convertForScreen(10.0, context)))),
+                        fontSize: Style.convertForScreen(8.0, context)))),
           ));
       columns.add(description);
     } else {

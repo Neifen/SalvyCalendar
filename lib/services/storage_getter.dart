@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:html';
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase/firebase.dart' as fb;
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
@@ -44,7 +45,9 @@ class StorageGetter {
     for (MapEntry<String, dynamic> element in days.entries) {
       var file = MediaFileModel.fromJsonMap(element);
 
-      file.url = _getUrl(file.fileName);
+      for (var fileName in file.fileNames) {
+        file.urls.add(_getUrl(fileName));
+      }
 
       _dayToFileMap[file.dayNumber] = file;
     }
@@ -72,20 +75,30 @@ class StorageGetter {
           break;
 
         case ContentType.image:
-          var data = await get(dayFile.url);
-          Image image = Image.memory(
-            data.bodyBytes,
+          var imageList = List<Image>();
+          for (var url in dayFile.urls) {
+            var data = await get(url);
+            Image image = Image.memory(
+              data.bodyBytes,
+            );
+            Completer<double> completer = new Completer<double>();
+
+            image.image
+                .resolve(ImageConfiguration())
+                .addListener(ImageStreamListener((info, _) {
+              completer.complete(0.2);
+            }));
+            await completer.future;
+            imageList.add(image);
+          }
+
+          dayFile.media = CarouselSlider(
+            items: imageList,
+            options: CarouselOptions(
+              enlargeCenterPage: true,
+              aspectRatio: 2.0,
+            ),
           );
-          Completer<double> completer = new Completer<double>();
-
-          image.image
-              .resolve(ImageConfiguration())
-              .addListener(ImageStreamListener((info, _) {
-            completer.complete((info.image.width / info.image.height) - 0.5);
-          }));
-          await completer.future;
-          dayFile.media = image;
-
           break;
         case ContentType.unknown:
           throw ("The day $day doesn't have an image or video saved but a ${dayFile.contentType}");
