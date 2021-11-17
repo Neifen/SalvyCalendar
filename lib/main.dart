@@ -12,10 +12,10 @@ class MyApp extends StatelessWidget {
     var _router = RouteService();
 
     return MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Salvy Calendar',
         theme: ThemeData(
-          bottomSheetTheme:
-              BottomSheetThemeData(backgroundColor: Colors.transparent),
+          bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.transparent),
           primarySwatch: Colors.red,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),

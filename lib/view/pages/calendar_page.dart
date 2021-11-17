@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:salvy_calendar/providers/navigation_provider.dart';
 import 'package:salvy_calendar/services/cookie_service.dart';
+import 'package:salvy_calendar/services/login_service.dart';
 import 'package:salvy_calendar/util/style.dart';
 import 'package:salvy_calendar/util/web_version_info.dart';
-import 'package:salvy_calendar/widgets/day_container.dart';
+import 'package:salvy_calendar/view/widgets/day_container.dart';
+import 'package:salvy_calendar/view/widgets/footer.dart';
 
 class CalendarPage extends StatelessWidget {
-  List<String> dayOrder;
+  List<String> dayOrder = [];
 
-  CalendarPage({Key key, this.title}) : super(key: key) {
+  CalendarPage({Key? key, required this.title}) : super(key: key) {
     loadDayOrders();
   }
 
   Future<List<String>> loadDayOrders() async {
-    if (dayOrder == null) {
+    if (dayOrder.isEmpty) {
       var cookies = await CookieService.getInstance();
       if (cookies.has(CookieService.DAY_LIST)) {
         dayOrder = cookies.loadList(CookieService.DAY_LIST);
@@ -43,14 +47,6 @@ class CalendarPage extends StatelessWidget {
     ];
   }
 
-  String getVersionNr() {
-    //could be async in future if package_info allows web tow ork
-    if (!WebVersionInfo.showVersion)
-      return "created by Nathan Bourquin - neifen.b@gmail.com";
-
-    return "created by Nathan Bourquin - neifen.b@gmail.com - ${WebVersionInfo.name}";
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,12 +63,12 @@ class CalendarPage extends StatelessWidget {
                       "Adventskalender",
                       style: Style.titleTextSTyle,
                     )),
-                FutureBuilder(
+                FutureBuilder<List<String>>(
                   future: loadDayOrders(),
                   builder: (context, snapshot) => snapshot.hasData
                       ? Column(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: createDaysList(snapshot.data),
+                          children: createDaysList(snapshot.data!),
                         )
                       : CircularProgressIndicator(),
                 ),
@@ -81,14 +77,7 @@ class CalendarPage extends StatelessWidget {
           ),
         ),
       ),
-      bottomSheet: Wrap(children: [
-        Align(
-            alignment: AlignmentDirectional.bottomEnd,
-            child: Text(
-              getVersionNr(),
-              style: Style.infoTextStyle,
-            )),
-      ]), // This trailing comma makes auto-formatting nicer for build methods.
+      bottomSheet: Footer(), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

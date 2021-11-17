@@ -4,7 +4,7 @@ import 'package:video_player/video_player.dart';
 class PlayPauseOverlay extends StatefulWidget {
   final VideoPlayerController controller;
 
-  const PlayPauseOverlay({Key key, this.controller}) : super(key: key);
+  const PlayPauseOverlay({Key? key, required this.controller}) : super(key: key);
 
   @override
   _PlayPauseOverlayState createState() => _PlayPauseOverlayState();
@@ -33,9 +33,7 @@ class _PlayPauseOverlayState extends State<PlayPauseOverlay> {
         GestureDetector(
           onTap: () {
             setState(() {
-              widget.controller.value.isPlaying
-                  ? widget.controller.pause()
-                  : widget.controller.play();
+              widget.controller.value.isPlaying ? widget.controller.pause() : widget.controller.play();
             });
           },
         )

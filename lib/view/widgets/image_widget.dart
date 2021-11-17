@@ -7,5 +7,7 @@ class ImageWidget extends StatelessWidget {
   ImageWidget(this.dayFile);
 
   @override
-  Widget build(BuildContext context) {}
+  Widget build(BuildContext context) {
+    return Text('');
+  }
 }

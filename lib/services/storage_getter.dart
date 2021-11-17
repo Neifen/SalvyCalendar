@@ -3,18 +3,19 @@ import 'dart:convert';
 import 'dart:html';
 
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:firebase/firebase.dart' as fb;
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:salvy_calendar/models/media_file_model.dart';
-import 'package:salvy_calendar/widgets/video_widget.dart';
+import 'package:salvy_calendar/view/widgets/video_widget.dart';
 
 class StorageGetter {
-  static Map<int, MediaFileModel> _dayToFileMap = Map();
-  static String _baseUrl =
-      "https://firebasestorage.googleapis.com/v0/b/calendarr-260410.appspot.com/o/$_corps%2F";
+  static Map<int, MediaFileModel> _dayToFileMap = {};
+  static String _baseUrl = "https://firebasestorage.googleapis.com";
+  static String _moreUrl = "/v0/b/calendarr-260410.appspot.com/o/$_corps%2F";
+
   static final String _urlMediaSuffix = "?alt=media";
-  static String _corps;
+  static String? _corps;
 
   static init(String corps) {
     _corps = corps;
@@ -28,12 +29,9 @@ class StorageGetter {
     _initiateFirebase();
 
     //first get the overview file
-    String url = _getUrl("calendar.json");
-
-    Response response = await get(url);
+    Response response = await get(_getUri('calendar.json'));
     if (response.statusCode != HttpStatus.ok) {
-      if (response.statusCode == HttpStatus.notFound)
-        throw ("Either corps $_corps doesn't exist or there is no calendar.txt defined");
+      if (response.statusCode == HttpStatus.notFound) throw ("Either corps $_corps doesn't exist or there is no calendar.json defined");
 
       throw ("There was a network error (${response.statusCode})");
     }
@@ -46,13 +44,12 @@ class StorageGetter {
       var file = MediaFileModel.fromJsonMap(element);
 
       for (var fileName in file.fileNames) {
-        file.urls.add(_getUrl(fileName));
+        file.urls.add(_getUri(fileName));
       }
 
       _dayToFileMap[file.dayNumber] = file;
     }
-    print(
-        "All calendar items are loaded, there is ${_dayToFileMap.length} days");
+    print("All calendar items are loaded, there is ${_dayToFileMap.length} days");
   }
 
   static Future<MediaFileModel> getContent(int day) async {
@@ -68,14 +65,14 @@ class StorageGetter {
 
     var dayFile = _dayToFileMap[day];
 
-    if (dayFile.media == null) {
+    if (dayFile!.media == null) {
       switch (dayFile.contentType) {
         case ContentType.video:
           dayFile.media = VideoWidget(dayFile);
           break;
 
         case ContentType.image:
-          var imageList = List<Image>();
+          List<Widget> imageList = [];
           for (var url in dayFile.urls) {
             var data = await get(url);
             Image image = Image.memory(
@@ -83,9 +80,7 @@ class StorageGetter {
             );
             Completer<double> completer = new Completer<double>();
 
-            image.image
-                .resolve(ImageConfiguration())
-                .addListener(ImageStreamListener((info, _) {
+            image.image.resolve(ImageConfiguration()).addListener(ImageStreamListener((info, _) {
               completer.complete(0.2);
             }));
             await completer.future;
@@ -108,21 +103,23 @@ class StorageGetter {
     return dayFile;
   }
 
-  static String _getUrl(String child) {
-    return _baseUrl + child + _urlMediaSuffix;
+  static _getUri(String filename) {
+    var uri = Uri.parse('$_baseUrl$_moreUrl$filename$_urlMediaSuffix');
+    return uri;
   }
 
   static _initiateFirebase() {
-    if (fb.apps.length == 0) {
-      fb.initializeApp(
-          apiKey: "AIzaSyAhChCiAoLRv_lPxv_pZSPcnNmtl0HvR-U",
-          authDomain: "calendarr-260410.firebaseapp.com",
-          databaseURL: "https://calendarr-260410.firebaseio.com",
-          projectId: "calendarr-260410",
-          storageBucket: "calendarr-260410.appspot.com",
-          messagingSenderId: "1036752557927",
-          appId: "1:1036752557927:web:882ae6d88c959af5a781c2",
-          measurementId: "G-C5E1LBCGSX");
+    if (Firebase.apps.length == 0) {
+      Firebase.initializeApp(
+          options: FirebaseOptions(
+              apiKey: "AIzaSyAhChCiAoLRv_lPxv_pZSPcnNmtl0HvR-U",
+              authDomain: "calendarr-260410.firebaseapp.com",
+              databaseURL: "https://calendarr-260410.firebaseio.com",
+              projectId: "calendarr-260410",
+              storageBucket: "calendarr-260410.appspot.com",
+              messagingSenderId: "1036752557927",
+              appId: "1:1036752557927:web:882ae6d88c959af5a781c2",
+              measurementId: "G-C5E1LBCGSX"));
     }
   }
 }

@@ -48,20 +48,20 @@ class DialogContent extends StatelessWidget {
         child: Material(
           color: Colors.transparent,
           child: Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5.0),
-                color: Style.primaryColor,
-                border: Border.all(color: Style.primaryColor)),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0), color: Style.primaryColor, border: Border.all(color: Style.primaryColor)),
             child: Center(
-              child: FutureBuilder(
+              child: FutureBuilder<MediaFileModel>(
                   future: StorageGetter.getContent(selectedDay.day),
                   builder: (context, snapshot) {
                     switch (snapshot.connectionState) {
                       case ConnectionState.done:
                         if (snapshot.hasError) {
-                          return Text(snapshot.error);
+                          return Text(snapshot.error.toString());
+                        } else if (snapshot.hasData) {
+                          return displayMedia(snapshot.data!, context);
                         }
-                        return displayMedia(snapshot.data, context);
+                        return MyProgressIndicator();
+
                       case ConnectionState.active:
                       case ConnectionState.none:
                       case ConnectionState.waiting:
@@ -77,12 +77,15 @@ class DialogContent extends StatelessWidget {
   }
 
   Widget displayMedia(MediaFileModel model, BuildContext context) {
+    if (model.media == null) {
+      return Icon(Icons.filter);
+    }
     List<Widget> columns = [];
     columns.add(Expanded(
       flex: 1,
       child: Container(),
     ));
-    columns.add(model.media);
+    columns.add(model.media!);
 
     if (model.hasDescription()) {
       var description = Expanded(
@@ -91,14 +94,9 @@ class DialogContent extends StatelessWidget {
             alignment: Alignment.topLeft,
             child: Padding(
                 padding: EdgeInsets.only(
-                    top: Style.convertForScreen(10.0, context),
-                    left: Style.convertForScreen(4.0, context),
-                    right: Style.convertForScreen(4.0, context)),
+                    top: Style.convertForScreen(10.0, context), left: Style.convertForScreen(4.0, context), right: Style.convertForScreen(4.0, context)),
                 child: Text(model.description,
-                    style: TextStyle(
-                        color: Style.textColor,
-                        fontFamily: Style.descriptionFontfamily,
-                        fontSize: Style.convertForScreen(8.0, context)))),
+                    style: TextStyle(color: Style.textColor, fontFamily: Style.descriptionFontfamily, fontSize: Style.convertForScreen(8.0, context)))),
           ));
       columns.add(description);
     } else {

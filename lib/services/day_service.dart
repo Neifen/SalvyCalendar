@@ -3,7 +3,7 @@ import 'package:salvy_calendar/models/day_model.dart';
 import 'package:salvy_calendar/util/style.dart';
 
 class DayService {
-  static DateTime _today;
+  static DateTime? _today;
 
   static _init() {
     if (_today == null) {
@@ -19,13 +19,13 @@ class DayService {
   static bool isDayToday(DayModel day) {
     _init();
     DateTime dateDay = DateTime(2020, 12, day.day);
-    return dateDay.isAtSameMomentAs(_today);
+    return dateDay.isAtSameMomentAs(_today!);
   }
 
   static bool isDayAvailable(DayModel day) {
     _init();
     DateTime dateDay = DateTime(2020, 12, day.day);
-    return dateDay.isBefore(_today) || dateDay.isAtSameMomentAs(_today);
+    return dateDay.isBefore(_today!) || dateDay.isAtSameMomentAs(_today!);
   }
 
   static Color getColor(DayModel day) {

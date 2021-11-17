@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:salvy_calendar/models/day_model.dart';
 import 'package:salvy_calendar/services/day_service.dart';
 import 'package:salvy_calendar/util/style.dart';
-import 'package:salvy_calendar/widgets/big_day_container.dart';
+import 'package:salvy_calendar/view/widgets/big_day_container.dart';
 
 class DayContainer extends StatelessWidget {
   final DayModel _dayModel;
@@ -25,9 +25,7 @@ class DayContainer extends StatelessWidget {
           aspectRatio: 1.0,
           child: Hero(
             tag: _dayModel.title,
-            flightShuttleBuilder: (flightContext, animation, flightDirection,
-                    fromHeroContext, toHeroContext) =>
-                Container(
+            flightShuttleBuilder: (flightContext, animation, flightDirection, fromHeroContext, toHeroContext) => Container(
               color: Style.primaryColor,
             ),
             transitionOnUserGestures: true,
@@ -36,9 +34,7 @@ class DayContainer extends StatelessWidget {
               child: Container(
                 margin: EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5.0),
-                    color: DayService.getColor(_dayModel),
-                    border: Border.all(color: DayService.getColor(_dayModel))),
+                    borderRadius: BorderRadius.circular(5.0), color: DayService.getColor(_dayModel), border: Border.all(color: DayService.getColor(_dayModel))),
                 child: Stack(
                   children: [
                     positionDeco(_dayModel.day, 1, context),
@@ -69,20 +65,11 @@ class DayContainer extends StatelessWidget {
 
     switch (nr) {
       case 1:
-        return Positioned(
-            child: child,
-            top: Style.convertForScreen(point[0].x, context),
-            left: Style.convertForScreen(point[0].y, context));
+        return Positioned(child: child, top: Style.convertForScreen(point[0].x, context), left: Style.convertForScreen(point[0].y, context));
       case 2:
-        return Positioned(
-            child: child,
-            top: Style.convertForScreen(point[1].x, context),
-            right: Style.convertForScreen(point[1].y, context));
+        return Positioned(child: child, top: Style.convertForScreen(point[1].x, context), right: Style.convertForScreen(point[1].y, context));
       default:
-        return Positioned(
-            child: child,
-            left: Style.convertForScreen(point[2].x, context),
-            bottom: Style.convertForScreen(point[2].y, context));
+        return Positioned(child: child, left: Style.convertForScreen(point[2].x, context), bottom: Style.convertForScreen(point[2].y, context));
     }
   }
 }

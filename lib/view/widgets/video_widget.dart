@@ -14,17 +14,17 @@ class VideoWidget extends StatefulWidget {
 }
 
 class _VideoWidgetState extends State<VideoWidget> {
-  VideoElement _video;
+  late VideoElement _video;
 
   @override
   void dispose() {
-    _video?.pause();
+    _video.pause();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    String _url = widget.dayFile.urls[0];
+    String _url = widget.dayFile.urls[0].toString();
 
     // ignore:undefined_prefixed_name
     ui.platformViewRegistry.registerViewFactory(_url, (int viewId) {
