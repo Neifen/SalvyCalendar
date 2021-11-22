@@ -2,12 +2,12 @@ import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:salvy_calendar/providers/navigation_provider.dart';
-import 'package:salvy_calendar/services/storage_getter.dart';
+import 'package:salvy_calendar/services/days_service.dart';
 import 'package:salvy_calendar/view/pages/admin_page.dart';
 import 'package:salvy_calendar/view/pages/calendar_page.dart';
 import 'package:salvy_calendar/view/pages/login_page.dart';
 
-import 'day_service.dart';
+import '../util/day_util.dart';
 
 class RouteService extends FluroRouter {
   var _corpsNameHandler = Handler(handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
@@ -15,14 +15,14 @@ class RouteService extends FluroRouter {
 
     List? dayMock = params["day"];
     if (dayMock != null && dayMock.isNotEmpty) {
-      DayService.fakeIt(int.parse(dayMock[0]));
+      DayUtil.fakeIt(int.parse(dayMock[0]));
     }
 
     if (corpsName == null || corpsName == '/') {
       return CircularProgressIndicator();
     }
 
-    StorageGetter.init(corpsName);
+    DaysService.init(corpsName);
     return MultiProvider(
         providers: [ChangeNotifierProvider(create: (_) => NavigationProvider())],
         builder: (context, child) {

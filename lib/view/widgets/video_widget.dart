@@ -1,30 +1,32 @@
+import 'dart:async';
 import 'dart:html';
 import 'dart:ui' as ui;
 
 import 'package:flutter/widgets.dart';
-import 'package:salvy_calendar/models/media_file_model.dart';
 
 class VideoWidget extends StatefulWidget {
-  final MediaFileModel dayFile;
-
-  VideoWidget(this.dayFile);
+  final String path;
+  VideoWidget(this.path);
 
   @override
   _VideoWidgetState createState() => _VideoWidgetState();
 }
 
 class _VideoWidgetState extends State<VideoWidget> {
-  late VideoElement _video;
+  VideoElement? _video;
 
   @override
   void dispose() {
-    _video.pause();
+    if (_video != null) {
+      _video!.pause();
+    }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    String _url = widget.dayFile.urls[0].toString();
+    String _url = widget.path;
+    Completer<double> ratioCompleter = Completer();
 
     // ignore:undefined_prefixed_name
     ui.platformViewRegistry.registerViewFactory(_url, (int viewId) {
@@ -37,17 +39,36 @@ class _VideoWidgetState extends State<VideoWidget> {
         ..controls = true
         ..disableRemotePlayback = true
         ..style.border = 'none';
-      _video.attributes['controlsList'] = 'nodownload';
+      _video!.style.width = '100%';
+      _video!.style.height = '100%';
 
-      return _video;
+      _video!.attributes['controlsList'] = 'nodownload';
+      _video!.onLoadedMetadata.listen((event) {
+        var calc = _video!.videoWidth / _video!.videoHeight;
+        if (!ratioCompleter.isCompleted) {
+          ratioCompleter.complete(calc >= 1.3 ? calc : 1.3);
+        }
+      });
+      return _video!;
     });
 
-    return AspectRatio(
-      aspectRatio: widget.dayFile.ratio,
-      child: Stack(children: [
-        // VideoPlayer(_videoController),
-        HtmlElementView(viewType: _url),
-      ]),
-    );
+    return FutureBuilder<double>(
+        future: ratioCompleter.future,
+        builder: (context, snapshot) {
+          if (snapshot.hasData && snapshot.data != null) {
+            var d = snapshot.data!;
+            return AspectRatio(
+                aspectRatio: d,
+                child: HtmlElementView(
+                  viewType: _url,
+                ));
+          }
+          return AspectRatio(
+            aspectRatio: 1.3,
+            child: Stack(children: [
+              HtmlElementView(viewType: _url),
+            ]),
+          );
+        });
   }
 }

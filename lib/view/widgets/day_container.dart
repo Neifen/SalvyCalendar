@@ -3,7 +3,7 @@ import 'dart:html';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:salvy_calendar/models/day_model.dart';
-import 'package:salvy_calendar/services/day_service.dart';
+import 'package:salvy_calendar/util/day_util.dart';
 import 'package:salvy_calendar/util/style.dart';
 import 'package:salvy_calendar/view/widgets/big_day_container.dart';
 
@@ -17,7 +17,7 @@ class DayContainer extends StatelessWidget {
     return Expanded(
       child: InkWell(
         onTap: () {
-          if (DayService.isDayAvailable(_dayModel)) {
+          if (DayUtil.isDayAvailable(_dayModel)) {
             BigDayDialog(_dayModel).showAsHero(context);
           }
         },
@@ -34,7 +34,7 @@ class DayContainer extends StatelessWidget {
               child: Container(
                 margin: EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5.0), color: DayService.getColor(_dayModel), border: Border.all(color: DayService.getColor(_dayModel))),
+                    borderRadius: BorderRadius.circular(5.0), color: DayUtil.getColor(_dayModel), border: Border.all(color: DayUtil.getColor(_dayModel))),
                 child: Stack(
                   children: [
                     positionDeco(_dayModel.day, 1, context),

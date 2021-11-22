@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginService {
-  login(String email, String password) {
-    FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+  login(String email, String password) async {
+    return FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
   }
 
   logout() {

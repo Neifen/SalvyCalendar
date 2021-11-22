@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:salvy_calendar/models/day_model.dart';
 import 'package:salvy_calendar/util/style.dart';
 
-class DayService {
+class DayUtil {
   static DateTime? _today;
 
   static _init() {

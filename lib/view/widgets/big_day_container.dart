@@ -3,7 +3,7 @@ import 'dart:html';
 import 'package:flutter/material.dart';
 import 'package:salvy_calendar/models/day_model.dart';
 import 'package:salvy_calendar/models/media_file_model.dart';
-import 'package:salvy_calendar/services/storage_getter.dart';
+import 'package:salvy_calendar/services/days_service.dart';
 import 'package:salvy_calendar/util/style.dart';
 
 import 'my_progress_indicator.dart';
@@ -51,7 +51,7 @@ class DialogContent extends StatelessWidget {
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0), color: Style.primaryColor, border: Border.all(color: Style.primaryColor)),
             child: Center(
               child: FutureBuilder<MediaFileModel>(
-                  future: StorageGetter.getContent(selectedDay.day),
+                  future: DaysService.getContent(selectedDay.day),
                   builder: (context, snapshot) {
                     switch (snapshot.connectionState) {
                       case ConnectionState.done:

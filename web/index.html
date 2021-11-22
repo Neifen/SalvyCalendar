@@ -44,7 +44,29 @@
   <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-storage.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-firestore.js"></script>
 
+  
+  <script type="module">
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyAhChCiAoLRv_lPxv_pZSPcnNmtl0HvR-U",
+              authDomain: "calendarr-260410.firebaseapp.com",
+              databaseURL: "https://calendarr-260410.firebaseio.com",
+              projectId: "calendarr-260410",
+              storageBucket: "calendarr-260410.appspot.com",
+              messagingSenderId: "1036752557927",
+              appId: "1:1036752557927:web:882ae6d88c959af5a781c2",
+              measurementId: "G-C5E1LBCGSX"
+    };
+  
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    firebase.firestore().persistenceEnabled();
+    firebase.firestore().settings({cacheSizeBytes: -1 });
+
+  </script>
   <script src="main.dart.js?version=1.1.0" type="application/javascript"></script>
 </body>
 </html>
