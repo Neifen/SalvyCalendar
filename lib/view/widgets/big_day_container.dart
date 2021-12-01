@@ -14,6 +14,7 @@ class BigDayDialog {
 
   void showAsHero(BuildContext context) {
     AlertDialog dialog = new AlertDialog(
+      contentPadding: EdgeInsets.all(8),
       backgroundColor: Style.primaryColor,
       content: getDialogContent(),
     );
@@ -54,21 +55,12 @@ class DialogContent extends StatelessWidget {
               child: FutureBuilder<MediaFileModel>(
                   future: DaysService.getContent(selectedDay.day),
                   builder: (context, snapshot) {
-                    switch (snapshot.connectionState) {
-                      case ConnectionState.done:
-                        if (snapshot.hasError) {
-                          return Text(snapshot.error.toString());
-                        } else if (snapshot.hasData) {
-                          return displayMedia(snapshot.data!, context);
-                        }
-                        return MyProgressIndicator();
-
-                      case ConnectionState.active:
-                      case ConnectionState.none:
-                      case ConnectionState.waiting:
-                      default:
-                        return MyProgressIndicator();
+                    if (snapshot.hasError) {
+                      return Text(snapshot.error.toString());
+                    } else if (snapshot.hasData) {
+                      return displayMedia(snapshot.data!, context);
                     }
+                    return MyProgressIndicator();
                   }),
             ),
           ),
@@ -86,13 +78,13 @@ class DialogContent extends StatelessWidget {
       flex: 1,
       child: Container(),
     ));
-    columns.add(model.media!);
+    columns.add(Expanded(flex: 10, child: model.media!));
 
     if (model.hasDescription()) {
       var description = Expanded(
-          flex: 1,
+          flex: 2,
           child: Align(
-            alignment: Alignment.topLeft,
+            alignment: Alignment.centerLeft,
             child: Padding(
                 padding: EdgeInsets.only(
                     top: Style.convertForScreen(10.0, context), left: Style.convertForScreen(4.0, context), right: Style.convertForScreen(4.0, context)),

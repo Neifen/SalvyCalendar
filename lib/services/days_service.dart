@@ -61,7 +61,7 @@ class DaysService {
       }
       if (itemList.length == 1) {
         dayFile.media = AspectRatio(
-          aspectRatio: 1.8,
+          aspectRatio: 1.5,
           child: itemList.first,
         );
       } else {
@@ -69,7 +69,7 @@ class DaysService {
           items: itemList,
           options: CarouselOptions(
             enlargeCenterPage: true,
-            aspectRatio: 1.8,
+            aspectRatio: 1.5,
           ),
         );
       }
