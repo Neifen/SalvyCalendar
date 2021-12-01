@@ -13,13 +13,10 @@ class Style {
 
   static const descriptionFontfamily = 'ProzaLibre';
 
-  static const buttonTextStyle = TextStyle(
-      color: textColor, fontFamily: descriptionFontfamily, fontSize: 22.0);
-  static const titleTextSTyle = TextStyle(
-      color: primaryColor, fontFamily: descriptionFontfamily, fontSize: 32.0);
+  static const buttonTextStyle = TextStyle(color: textColor, fontFamily: descriptionFontfamily, fontSize: 22.0);
+  static const titleTextSTyle = TextStyle(color: primaryColor, fontFamily: descriptionFontfamily, fontSize: 32.0);
 
-  static const infoTextStyle =
-      TextStyle(color: Color(0xffb71c1c), fontSize: 10.0);
+  static const infoTextStyle = TextStyle(color: Color(0xffb71c1c), fontSize: 10.0);
 
   static const List randomPoints = [
     [Point(14.0, 5.0), Point(25.0, 4.0), Point(19.0, 5.0)], //1,13
