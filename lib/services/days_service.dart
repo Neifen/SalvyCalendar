@@ -60,13 +60,16 @@ class DaysService {
         }
       }
       if (itemList.length == 1) {
-        dayFile.media = itemList.first;
+        dayFile.media = AspectRatio(
+          aspectRatio: 1.8,
+          child: itemList.first,
+        );
       } else {
         dayFile.media = CarouselSlider(
           items: itemList,
           options: CarouselOptions(
             enlargeCenterPage: true,
-            aspectRatio: 2.0,
+            aspectRatio: 1.8,
           ),
         );
       }
@@ -76,9 +79,11 @@ class DaysService {
   }
 
   static deleteItemFromDay(String corp, MediaFileModel model, ItemModel item) async {
-    await PhotoRepo.removePhoto(item.path);
-    model.items.remove(item);
-    await DayRepo().save(corp, model);
+    try {
+      model.items.remove(item);
+      await DayRepo().save(corp, model);
+      await PhotoRepo.removePhoto(item.path);
+    } catch (e) {}
   }
 
   static addItemToDay(String corp, MediaFileModel model, PlatformFile file) async {
